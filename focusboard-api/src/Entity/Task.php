@@ -30,20 +30,15 @@ class Task
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $energyLevel = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $durationEstimation = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'subTasks')]
-    private ?self $board = null;
-
-    /**
-     * @var Collection<int, self>
-     */
-    #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'board')]
-    private Collection $subTasks;
+    #[ORM\ManyToOne(targetEntity: Board::class, inversedBy: 'tasks')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Board $board = null;
 
     /**
      * @var Collection<int, Tag>
@@ -53,8 +48,8 @@ class Task
 
     public function __construct()
     {
-        $this->subTasks = new ArrayCollection();
         $this->tags = new ArrayCollection();
+        $this->createdAt = new \DateTimeImmutable();
     }
 
     public function getId(): ?int
@@ -134,44 +129,14 @@ class Task
         return $this;
     }
 
-    public function getBoard(): ?self
+    public function getBoard(): ?Board
     {
         return $this->board;
     }
 
-    public function setBoard(?self $board): static
+    public function setBoard(?Board $board): static
     {
         $this->board = $board;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, self>
-     */
-    public function getSubTasks(): Collection
-    {
-        return $this->subTasks;
-    }
-
-    public function addSubTask(self $subTask): static
-    {
-        if (!$this->subTasks->contains($subTask)) {
-            $this->subTasks->add($subTask);
-            $subTask->setBoard($this);
-        }
-
-        return $this;
-    }
-
-    public function removeSubTask(self $subTask): static
-    {
-        if ($this->subTasks->removeElement($subTask)) {
-            // set the owning side to null (unless already changed)
-            if ($subTask->getBoard() === $this) {
-                $subTask->setBoard(null);
-            }
-        }
 
         return $this;
     }
