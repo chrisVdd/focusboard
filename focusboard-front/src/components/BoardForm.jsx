@@ -5,6 +5,7 @@ export default function BoardForm({ onBoardAdded }) {
 
     const [title, setTitle] = useState('');
     const [color, setColor] = useState('emerald'); // default color
+    const [icon, setIcon] = useState('📋'); // default icon
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleSubmit = (e) => {
@@ -22,16 +23,18 @@ export default function BoardForm({ onBoardAdded }) {
             },
             body: JSON.stringify({
                 title: title,
+                icon: icon,
                 color: color,
             })
         })
             .then(response => {
                 if (!response.ok) throw new Error('Error while creating');
-                return response.json;
+                return response.json();
             })
             .then(() => {
                 onBoardAdded();
                 setTitle('');
+                setIcon('📋');
                 setIsSubmitting(false);
             })
             .catch(error => {
@@ -49,6 +52,14 @@ export default function BoardForm({ onBoardAdded }) {
                 placeholder="New Board (ex: work)"
                 disabled={isSubmitting}
                 className="flex-1 bg-slate-800 text-white px-4 py-3 rounded-xl border border-slate-700 focus:border-emerald-500 focus:outline-none transition-colors"
+            />
+
+            <input
+                type="text"
+                value={icon}
+                onChange={(e) => setIcon(e.target.value)}
+                placeholder="Emoji (ex: 🚀)"
+                className="w-16 bg-slate-800 text-center text-2xl p-3 rounded-xl border border-slate-700"
             />
 
             <div className="flex gap-2 px-2">
