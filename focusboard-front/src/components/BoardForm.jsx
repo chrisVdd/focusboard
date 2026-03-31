@@ -1,8 +1,10 @@
 import { useState } from "react";
+import { boardColors } from "../utils/colors.js";
 
 export default function BoardForm({ onBoardAdded }) {
 
     const [title, setTitle] = useState('');
+    const [color, setColor] = useState('emerald'); // default color
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleSubmit = (e) => {
@@ -20,14 +22,14 @@ export default function BoardForm({ onBoardAdded }) {
             },
             body: JSON.stringify({
                 title: title,
-                color: 'emerald'
+                color: color,
             })
         })
             .then(response => {
                 if (!response.ok) throw new Error('Error while creating');
                 return response.json;
             })
-            .then(newBoard => {
+            .then(() => {
                 onBoardAdded();
                 setTitle('');
                 setIsSubmitting(false);
@@ -39,7 +41,7 @@ export default function BoardForm({ onBoardAdded }) {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="mb-8 flex gap-4">
+        <form onSubmit={handleSubmit} className="mb-12 bg-slate-800/50 p-4 rounded-2xl border border-slate-700/50 flex flex-col md:flex-row gap-4 items-center">
             <input
                 type="text"
                 value={title}
@@ -48,6 +50,23 @@ export default function BoardForm({ onBoardAdded }) {
                 disabled={isSubmitting}
                 className="flex-1 bg-slate-800 text-white px-4 py-3 rounded-xl border border-slate-700 focus:border-emerald-500 focus:outline-none transition-colors"
             />
+
+            <div className="flex gap-2 px-2">
+                {Object.entries(boardColors).map(([colorKey, styles]) => (
+                    <button
+                        key={colorKey}
+                        type="button"
+                        onClick={() => setColor(colorKey)}
+                        className={`w-8 h-8 rounded-full transition-all duration-300 ${styles.bg} ${
+                            color === colorKey
+                                ? 'ring-4 ring-offset-2 ring-offset-slate-900 ring-slate-400 scale-110'
+                                : 'opacity-50 hover:opacity-100 hover:scale-110'
+                        }`}
+                        aria-label={`Select a color ${colorKey}`}
+                    />
+                ))}
+            </div>
+
             <button
                 type="submit"
                 disabled={isSubmitting || !title.trim()}

@@ -1,6 +1,7 @@
 import { useState } from "react";
+import { boardColors } from "../utils/colors.js";
 
-export default function TaskItem({ task, onTaskUpdated }) {
+export default function TaskItem({ task, onTaskUpdated, tagsDict }) {
     const [isCompleted, setIsCompleted] = useState(task.completed ?? false);
     const [isUpdating, setIsUpdating] = useState(false);
 
@@ -56,6 +57,29 @@ export default function TaskItem({ task, onTaskUpdated }) {
             }`}>
                 {task.title}
             </span>
+
+            {task.tags && task.tags.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                    {task.tags.map(tagIri => {
+                        // On cherche le tag dans notre dictionnaire
+                        const tagData = tagsDict ? tagsDict[tagIri] : null;
+                        if (!tagData) return null; // Si on ne le trouve pas, on n'affiche rien
+
+                        // On récupère ses couleurs (avec un fallback gris par sécurité)
+                        const theme = boardColors[tagData.color] || { bg: 'bg-slate-700', text: 'text-slate-300', border: 'border-slate-600' };
+
+                        return (
+                            <span
+                                key={tagIri}
+                                className={`text-xs px-3 py-1 rounded-full font-medium border bg-slate-900/50 ${theme.text} ${theme.border}`}
+                            >
+                                    {tagData.name}
+                                </span>
+                        );
+                    })}
+                </div>
+            )}
+
         </div>
     );
 }

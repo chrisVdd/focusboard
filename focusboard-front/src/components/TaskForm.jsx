@@ -1,8 +1,12 @@
 import { useState } from 'react';
 
-export default function TaskForm({ boardId, onTaskAdded }) {
+// 👉 On ajoute colorTheme dans les paramètres
+export default function TaskForm({ boardId, onTaskAdded, colorTheme }) {
     const [title, setTitle] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // Sécurité : si on n'a pas de thème, on met un fond par défaut
+    const themeBg = colorTheme ? colorTheme.bg : 'bg-emerald-600';
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -10,7 +14,6 @@ export default function TaskForm({ boardId, onTaskAdded }) {
 
         setIsSubmitting(true);
 
-        // On reproduit exactement le JSON qui a fonctionné dans Swagger !
         fetch('https://localhost/api/tasks', {
             method: 'POST',
             headers: {
@@ -20,7 +23,7 @@ export default function TaskForm({ boardId, onTaskAdded }) {
             body: JSON.stringify({
                 title: title,
                 isCompleted: false,
-                board: `/api/boards/${boardId}` // 👈 La magie de la relation API Platform
+                board: `/api/boards/${boardId}`
             })
         })
             .then(response => {
@@ -28,12 +31,12 @@ export default function TaskForm({ boardId, onTaskAdded }) {
                 return response.json();
             })
             .then(() => {
-                onTaskAdded(); // On prévient le parent de recharger la liste
+                onTaskAdded();
                 setTitle('');
                 setIsSubmitting(false);
             })
             .catch(error => {
-                console.error("Erreur lors de l'ajout de la tâche :", error);
+                console.error("Erreur lors de l'ajout :", error);
                 setIsSubmitting(false);
             });
     };
@@ -46,12 +49,13 @@ export default function TaskForm({ boardId, onTaskAdded }) {
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Nouvelle tâche à exploser..."
                 disabled={isSubmitting}
-                className="flex-1 bg-slate-800 text-white px-4 py-3 rounded-xl border border-slate-700 focus:border-emerald-500 focus:outline-none transition-colors"
+                className="flex-1 bg-slate-800 text-white px-4 py-3 rounded-xl border border-slate-700 focus:border-slate-500 focus:outline-none transition-colors"
             />
             <button
                 type="submit"
                 disabled={isSubmitting || !title.trim()}
-                className="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-3 rounded-xl font-semibold transition-colors disabled:opacity-50"
+                // 👉 On utilise la couleur dynamique ici :
+                className={`${themeBg} hover:brightness-110 text-white px-5 py-3 rounded-xl font-semibold transition-all disabled:opacity-50`}
             >
                 {isSubmitting ? '...' : '+ Ajouter'}
             </button>
