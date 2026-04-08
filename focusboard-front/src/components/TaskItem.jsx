@@ -2,7 +2,7 @@ import { useState } from "react";
 import { boardColors } from "../utils/colors.js";
 
 export default function TaskItem({ task, onTaskUpdated, tagsDict }) {
-    const [isCompleted, setIsCompleted] = useState(task.completed ?? false);
+    const [isCompleted, setIsCompleted] = useState(task.isCompleted ?? false);
     const [isUpdating, setIsUpdating] = useState(false);
 
     const toggleCompletion = () => {
@@ -13,7 +13,6 @@ export default function TaskItem({ task, onTaskUpdated, tagsDict }) {
         fetch(`https://localhost${task['@id']}`, {
             method: 'PATCH',
             headers: {
-                'Accept': 'application/ld+json',
                 'Content-Type': 'application/merge-patch+json',
             },
             body: JSON.stringify({

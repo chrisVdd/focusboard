@@ -63,8 +63,8 @@ export default function BoardView() {
         );
     };
 
-    const allActiveTasks = tasks.filter(task => !task.completed);
-    const allCompletedTasks = tasks.filter(task => task.completed);
+    const allActiveTasks = tasks.filter(task => !task.isCompleted);
+    const allCompletedTasks = tasks.filter(task => task.isCompleted);
 
     const displayedActiveTasks = filterTasks(allActiveTasks);
     const displayedCompletedTasks = filterTasks(allCompletedTasks);

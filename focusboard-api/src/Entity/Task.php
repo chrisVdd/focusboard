@@ -8,36 +8,47 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: TaskRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    normalizationContext: ['groups' => ['task:read']],
+    denormalizationContext: ['groups' => ['task:write']],
+)]
 class Task
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['task:read', 'board:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['task:read', 'board:read', 'task:write'])]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
     #[ORM\Column]
+    #[Groups(['task:read', 'board:read', 'task:write'])]
     private ?bool $isCompleted = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['task:read', 'board:read'])]
     private ?string $energyLevel = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['task:read', 'board:read'])]
     private ?string $durationEstimation = null;
 
     #[ORM\Column]
+    #[Groups(['task:read', 'board:read'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\ManyToOne(targetEntity: Board::class, inversedBy: 'tasks')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['task:read', 'board:read', 'task:write'])]
     private ?Board $board = null;
 
     /**
@@ -50,6 +61,7 @@ class Task
     {
         $this->tags = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
+        $this->isCompleted = false;
     }
 
     public function getId(): ?int
@@ -81,7 +93,7 @@ class Task
         return $this;
     }
 
-    public function isCompleted(): ?bool
+    public function getIsCompleted(): ?bool
     {
         return $this->isCompleted;
     }
