@@ -1,54 +1,80 @@
-import { useState, useEffect } from "react";
+// Home.jsx
+import { useState, useEffect, useMemo } from "react";
+// 💡 On change les capteurs ici :
+import {
+    DndContext,
+    closestCenter,
+    MouseSensor,
+    TouchSensor,
+    useSensor,
+    useSensors
+} from "@dnd-kit/core";
+import { arrayMove, SortableContext, rectSortingStrategy } from "@dnd-kit/sortable";
 import BoardList from "../components/BoardList.jsx";
 import BoardForm from "../components/BoardForm.jsx";
 
 function Home() {
+    const [boards, setBoards] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
 
-    // 1. The component memory
-  const [boards, setBoards] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+    // 💡 Configuration robuste des capteurs
+    const sensors = useSensors(
+        useSensor(MouseSensor, {
+            // On doit bouger de 10px pour confirmer que c'est un drag et non un clic
+            activationConstraint: { distance: 10 },
+        }),
+        useSensor(TouchSensor, {
+            // Appui long (250ms) pour le mobile pour éviter les conflits de scroll
+            activationConstraint: { delay: 250, tolerance: 5 },
+        })
+    );
 
-  // 2. Load datas
-  const loadBoards = () => {
-      fetch('https://localhost/api/boards', {
-          headers: {
-              'Accept': 'application/ld+json'
-          }
-      })
-          .then(response => {
-              if (!response.ok) throw new Error("Error during retrieving")
-              return response.json()
-          })
-          .then(data => {
-              setBoards(data.member || []);
-              setIsLoading(false);
-          })
-          .catch(error => {
-              console.error('Error while connecting: ', error);
-              setIsLoading(false);
-          });
-  };
+    const boardIds = useMemo(() => boards.map(b => b.id.toString()), [boards]);
 
-  // 3. Calling the data
-  useEffect(() => {
-      loadBoards();
-  }, []);
+    const loadBoards = () => {
+        fetch('https://localhost/api/boards', { headers: { 'Accept': 'application/ld+json' } })
+            .then(res => res.json())
+            .then(data => {
+                const sorted = (data.member || []).sort((a, b) => (a.position ?? 0) - (b.position ?? 0));
+                setBoards(sorted);
+                setIsLoading(false);
+            })
+            .catch(() => setIsLoading(false));
+    };
 
-  const handleBoardAdded = (newBoard) => {
-      loadBoards();
-  };
+    useEffect(() => { loadBoards(); }, []);
 
-  // 3. Interface (JSX + Tailwind)
-  return (
-      <div className="min-h-screen bg-slate-900 p-8 text-white">
-          <h1 className="text-4xl font-bold text-emerald-400 mb-8 tracking-wide">
-              FocusBoard
-          </h1>
+    const handleDragEnd = (event) => {
+        const { active, over } = event;
+        if (over && active.id !== over.id) {
+            setBoards((items) => {
+                const oldIndex = items.findIndex((i) => i.id.toString() === active.id);
+                const newIndex = items.findIndex((i) => i.id.toString() === over.id);
+                const newOrder = arrayMove(items, oldIndex, newIndex);
 
-          <BoardForm onBoardAdded={handleBoardAdded} />
-          <BoardList boards={boards} isLoading={isLoading} />
-      </div>
-  );
+                fetch(`https://localhost/api/boards/${active.id}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/merge-patch+json' },
+                    body: JSON.stringify({ position: newIndex })
+                });
+
+                return newOrder;
+            });
+        }
+    };
+
+    return (
+        <div className="min-h-screen bg-slate-900 p-8 text-white">
+            <h1 className="text-4xl font-bold text-emerald-400 mb-8 tracking-wide">FocusBoard</h1>
+            <BoardForm onBoardAdded={loadBoards} />
+
+            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                <SortableContext items={boardIds} strategy={rectSortingStrategy}>
+                    <BoardList boards={boards} isLoading={isLoading} />
+                </SortableContext>
+            </DndContext>
+        </div>
+    );
 }
 
-export default Home
+export default Home;

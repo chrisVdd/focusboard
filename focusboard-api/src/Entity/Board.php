@@ -12,6 +12,8 @@ use Symfony\Component\Serializer\Attribute\Groups;
 #[ORM\Entity(repositoryClass: BoardRepository::class)]
 #[ApiResource(
     normalizationContext: ['groups' => ['board:read']],
+    denormalizationContext: ['groups' => ['board:write']],
+    order: ['position' => 'ASC'],
 )]
 class Board
 {
@@ -33,9 +35,13 @@ class Board
     #[Groups(['board:read'])]
     private ?string $icon = null;
 
-    #[ORM\OneToMany(mappedBy: 'board', targetEntity: Task::class, orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: Task::class, mappedBy: 'board', orphanRemoval: true)]
     #[Groups(['board:read'])]
     private Collection $tasks;
+
+    #[ORM\Column(nullable: true)]
+    #[Groups(['board:read', 'board:write'])]
+    private ?int $position = null;
 
     public function __construct()
     {
@@ -105,5 +111,15 @@ class Board
         $this->tasks->removeElement($task);
 
         return $this;
+    }
+
+    public function getPosition(): ?int
+    {
+        return $this->position;
+    }
+
+    public function setPosition(?int $position): static
+    {
+        $this->position = $position; return $this;
     }
 }
