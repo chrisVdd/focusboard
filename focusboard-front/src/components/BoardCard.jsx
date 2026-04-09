@@ -3,15 +3,15 @@ import { boardColors } from '../utils/colors';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
-export default function BoardCard({ board }) {
-    // 💡 Toujours l'ID en String pour la stabilité
+export default function BoardCard({ board, onDeleted }) {
+
     const {
         attributes,
         listeners,
         setNodeRef,
         transform,
         transition,
-        isDragging
+        isDragging// 💡 Toujours l'ID en String pour la stabilité
     } = useSortable({ id: board.id.toString() });
 
     const style = {
@@ -30,6 +30,25 @@ export default function BoardCard({ board }) {
             .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))[0]
         : null;
 
+    const handleDelete = async (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+
+        if (window.confirm(`Delete the project "${board.title}"`)) {
+            try {
+                const response = await fetch(`https://localhost/api/boards/${board.id}`, {
+                    method: 'DELETE',
+                });
+
+                if (response.ok && onDeleted) {
+                    onDeleted(board.id);
+                }
+            } catch (error) {
+                console.error("Error while deleting, ", error);
+            }
+        }
+    }
+
     return (
         /* 💡 ICI : On met les listeners sur toute la zone de la carte */
         <div
@@ -39,6 +58,16 @@ export default function BoardCard({ board }) {
             {...listeners}
             className="relative"
         >
+            <button
+                onClick={handleDelete}
+                className="absolute bottom-4 right-4 z-30 bg-rose-600 text-white p-2.5 rounded-xl shadow-xl hover:bg-rose-500 hover:scale-110 transition-all border border-rose-400/20 backdrop-blur-sm"
+                title="Delete this board"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+            </button>
+
             <Link
                 to={`/board/${board.id}`}
                 /* 💡 'pointer-events-auto' assure que le lien reste cliquable */

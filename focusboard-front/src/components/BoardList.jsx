@@ -1,7 +1,7 @@
 // BoardList.jsx
 import BoardCard from "./BoardCard.jsx";
 
-export default function BoardList({ boards, isLoading }) {
+export default function BoardList({ boards, isLoading, onBoardDeleted }) {
     if (isLoading) {
         return <p className="text-emerald-500 animate-pulse">Loading database</p>
     }
@@ -13,8 +13,7 @@ export default function BoardList({ boards, isLoading }) {
     return (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {boards.map(board => (
-                // 💡 Correction : .toString() pour correspondre au SortableContext
-                <BoardCard key={board.id.toString()} board={board} />
+                <BoardCard key={board.id.toString()} board={board} onDeleted={onBoardDeleted} />
             ))}
         </div>
     );

@@ -1,6 +1,5 @@
 // Home.jsx
 import { useState, useEffect, useMemo } from "react";
-// 💡 On change les capteurs ici :
 import {
     DndContext,
     closestCenter,
@@ -63,6 +62,10 @@ function Home() {
         }
     };
 
+    const handleBoardDeleted = (boardId) => {
+        setBoards(prev => prev.filter(b => b.id !== boardId));
+    }
+
     return (
         <div className="min-h-screen bg-slate-900 p-8 text-white">
             <h1 className="text-4xl font-bold text-emerald-400 mb-8 tracking-wide">FocusBoard</h1>
@@ -70,7 +73,7 @@ function Home() {
 
             <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
                 <SortableContext items={boardIds} strategy={rectSortingStrategy}>
-                    <BoardList boards={boards} isLoading={isLoading} />
+                    <BoardList boards={boards} isLoading={isLoading} onBoardDeleted={handleBoardDeleted} />
                 </SortableContext>
             </DndContext>
         </div>
