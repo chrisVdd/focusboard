@@ -57,6 +57,10 @@ class Task
     #[ORM\ManyToMany(targetEntity: Tag::class, inversedBy: 'tasks')]
     private Collection $tags;
 
+    #[ORM\Column(nullable: true)]
+    #[Groups(['task:read', 'task:write', 'board:read'])]
+    private ?\DateTimeImmutable $completedAt = null;
+
     public function __construct()
     {
         $this->tags = new ArrayCollection();
@@ -175,5 +179,16 @@ class Task
         $this->tags->removeElement($tag);
 
         return $this;
+    }
+
+    public function setCompletedAt(?\DateTimeImmutable $completedAt): static
+    {
+        $this->completedAt = $completedAt;
+        return $this;
+    }
+
+    public function getCompletedAt(): ?\DateTimeImmutable
+    {
+        return $this->completedAt;
     }
 }

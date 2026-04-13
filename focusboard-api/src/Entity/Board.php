@@ -24,15 +24,15 @@ class Board
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['board:read'])]
+    #[Groups(['board:read', 'board:write'])]
     private ?string $title = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['board:read'])]
+    #[Groups(['board:read', 'board:write'])]
     private ?string $color = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['board:read'])]
+    #[Groups(['board:read', 'board:write'])]
     private ?string $icon = null;
 
     #[ORM\OneToMany(targetEntity: Task::class, mappedBy: 'board', orphanRemoval: true)]

@@ -1,5 +1,6 @@
 // Home.jsx
 import { useState, useEffect, useMemo } from "react";
+import { Link } from 'react-router-dom';
 import {
     DndContext,
     closestCenter,
@@ -11,7 +12,7 @@ import {
 import { arrayMove, SortableContext, rectSortingStrategy } from "@dnd-kit/sortable";
 import BoardList from "../components/BoardList.jsx";
 import BoardForm from "../components/BoardForm.jsx";
-
+4
 function Home() {
     const [boards, setBoards] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -71,11 +72,27 @@ function Home() {
             <h1 className="text-4xl font-bold text-emerald-400 mb-8 tracking-wide">FocusBoard</h1>
             <BoardForm onBoardAdded={loadBoards} />
 
-            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-                <SortableContext items={boardIds} strategy={rectSortingStrategy}>
-                    <BoardList boards={boards} isLoading={isLoading} onBoardDeleted={handleBoardDeleted} />
-                </SortableContext>
-            </DndContext>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
+
+                <Link to="/victory-lane" className="group relative flex flex-col justify-between bg-gradient-to-br from-amber-500/10 to-yellow-600/20 p-8 rounded-3xl border-2 border-yellow-500/30 shadow-xl transition-all hover:scale-[1.02] hover:border-yellow-500/60 min-h-[220px]">
+                    <div>
+                        <span className="text-5xl mb-4 block">🏆</span>
+                        <h2 className="text-2xl font-bold text-yellow-500">Victory Lane</h2>
+                        <p className="text-xs text-yellow-200/50 italic mt-2 leading-relaxed">
+                            "Le panthéon de tes succès."
+                        </p>
+                    </div>
+                    <div className="text-[10px] font-black text-yellow-600 uppercase tracking-widest group-hover:text-yellow-400 transition-colors">
+                        Voir les trophées →
+                    </div>
+                </Link>
+
+                <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                    <SortableContext items={boardIds} strategy={rectSortingStrategy}>
+                        <BoardList boards={boards} isLoading={isLoading} onBoardDeleted={handleBoardDeleted} />
+                    </SortableContext>
+                </DndContext>
+            </div>
         </div>
     );
 }

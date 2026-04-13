@@ -10,14 +10,17 @@ export default function TaskItem({ task, onTaskUpdated, tagsDict }) {
         setIsCompleted(newValue);
         setIsUpdating(true);
 
+        const patchData = {
+            isCompleted: newValue,
+            completedAt: newValue ? new Date().toISOString() : null
+        };
+
         fetch(`https://localhost${task['@id']}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/merge-patch+json',
             },
-            body: JSON.stringify({
-                isCompleted: newValue
-            })
+            body: JSON.stringify(patchData)
         })
             .then(response => {
                 if (!response.ok) throw new Error('Error while updating');

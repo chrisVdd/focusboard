@@ -12,7 +12,6 @@ export default function BoardView() {
     const [tagsDict, setTagsDict] = useState({});
     const [isLoading, setIsLoading] = useState(true);
 
-    // 🧠 NOUVEAU : L'état qui retient les filtres actifs
     const [activeFilters, setActiveFilters] = useState([]);
 
     const loadTasks = () => {

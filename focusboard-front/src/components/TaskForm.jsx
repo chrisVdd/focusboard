@@ -1,12 +1,19 @@
 import { useState } from 'react';
+import { boardColors } from '../utils/colors.js';
 
-// 👉 On ajoute colorTheme dans les paramètres
-export default function TaskForm({ boardId, onTaskAdded, colorTheme }) {
+export default function TaskForm({ boardId, onTaskAdded, colorTheme, availableTags }) {
     const [title, setTitle] = useState('');
+    const [selectedTags, setSelectedTags] = useState([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    // Sécurité : si on n'a pas de thème, on met un fond par défaut
     const themeBg = colorTheme ? colorTheme.bg : 'bg-emerald-600';
+    const themeText = colorTheme ? colorTheme.text : 'text-emerald-400';
+
+    const toggleTag = (tagIri) => {
+        setSelectedTags(prev =>
+            prev.includes(tagIri) ? prev.filter(t => t !== tagIri) : [...prev, tagIri]
+        );
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -23,7 +30,9 @@ export default function TaskForm({ boardId, onTaskAdded, colorTheme }) {
             body: JSON.stringify({
                 title: title,
                 isCompleted: false,
-                board: `/api/boards/${boardId}`
+                completedAt: null,
+                board: `/api/boards/${boardId}`,
+                tags: selectedTags
             })
         })
             .then(response => {
@@ -33,6 +42,7 @@ export default function TaskForm({ boardId, onTaskAdded, colorTheme }) {
             .then(() => {
                 onTaskAdded();
                 setTitle('');
+                setSelectedTags([]);
                 setIsSubmitting(false);
             })
             .catch(error => {
@@ -42,23 +52,49 @@ export default function TaskForm({ boardId, onTaskAdded, colorTheme }) {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="mb-6 flex gap-3">
-            <input
-                type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="Nouvelle tâche à exploser..."
-                disabled={isSubmitting}
-                className="flex-1 bg-slate-800 text-white px-4 py-3 rounded-xl border border-slate-700 focus:border-slate-500 focus:outline-none transition-colors"
-            />
-            <button
-                type="submit"
-                disabled={isSubmitting || !title.trim()}
-                // 👉 On utilise la couleur dynamique ici :
-                className={`${themeBg} hover:brightness-110 text-white px-5 py-3 rounded-xl font-semibold transition-all disabled:opacity-50`}
-            >
-                {isSubmitting ? '...' : '+ Ajouter'}
-            </button>
-        </form>
+        <div className="mb-10 bg-slate-800/20 p-6 rounded-2xl border border-slate-700/50">
+            <form onSubmit={handleSubmit} className="flex gap-3 mb-4">
+                <input
+                    type="text"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    placeholder="Nouvelle tâche à exploser..."
+                    disabled={isSubmitting}
+                    className="flex-1 bg-slate-900 text-white px-4 py-3 rounded-xl border border-slate-700 focus:border-slate-500 focus:outline-none transition-colors"
+                />
+                <button
+                    type="submit"
+                    disabled={isSubmitting || !title.trim()}
+                    className={`${themeBg} hover:brightness-110 text-white px-6 py-3 rounded-xl font-bold shadow-lg transition-all disabled:opacity-50 flex items-center gap-2`}
+                >
+                    {isSubmitting ? '...' : <span><span className="text-xl">+</span> Ajouter</span>}
+                </button>
+            </form>
+
+            {availableTags && availableTags.length > 0 && (
+                <div className="flex flex-wrap gap-2 items-center">
+                    <span className="text-[10px] uppercase font-bold text-slate-500 tracking-wider mr-2">Associer des tags :</span>
+                    {availableTags.map(tag => {
+                        const isSelected = selectedTags.includes(tag['@id']);
+                        const tagTheme = boardColors[tag.color] || boardColors['emerald'];
+
+                        return (
+                            <button
+                                key={tag['@id']}
+                                type="button"
+                                onClick={() => toggleTag(tag['@id'])}
+                                className={`text-xs px-3 py-1 rounded-full border transition-all ${
+                                    isSelected
+                                        ? `${tagTheme.bg} text-white border-transparent`
+                                        : `bg-slate-900/50 ${tagTheme.text} ${tagTheme.border} opacity-50 hover:opacity-100`
+                                }`}
+                            >
+                                {tag.name}
+                            </button>
+                        );
+                    })}
+                </div>
+            )}
+        </div>
     );
 }
