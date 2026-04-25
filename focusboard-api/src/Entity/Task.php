@@ -61,11 +61,16 @@ class Task
     #[Groups(['task:read', 'task:write', 'board:read'])]
     private ?\DateTimeImmutable $completedAt = null;
 
+    #[ORM\OneToMany(mappedBy: 'task', targetEntity: SubTask::class, orphanRemoval: true, cascade: ['persist'])]
+    #[Groups(['task:read'])]
+    private Collection $subTasks;
+
     public function __construct()
     {
         $this->tags = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
         $this->isCompleted = false;
+        $this->subTasks = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -190,5 +195,35 @@ class Task
     public function getCompletedAt(): ?\DateTimeImmutable
     {
         return $this->completedAt;
+    }
+
+    /**
+     * @return Collection<int, SubTask>
+     */
+    public function getSubTasks(): Collection
+    {
+        return $this->subTasks;
+    }
+
+    public function addSubTask(SubTask $subTask): static
+    {
+        if (!$this->subTasks->contains($subTask)) {
+            $this->subTasks->add($subTask);
+            $subTask->setTask($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSubTask(SubTask $subTask): static
+    {
+        if ($this->subTasks->removeElement($subTask)) {
+            // set the owning side to null (unless already changed)
+            if ($subTask->getTask() === $this) {
+                $subTask->setTask(null);
+            }
+        }
+
+        return $this;
     }
 }
