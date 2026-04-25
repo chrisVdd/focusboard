@@ -70,11 +70,6 @@ export default function BoardCard({ board, onDeleted }) {
 
             <Link
                 to={`/board/${board.id}`}
-                /* 💡 CHANGEMENTS :
-                   - min-h-[220px] pour égaliser les hauteurs
-                   - rounded-3xl pour plus de douceur
-                   - flex-col justify-between pour caler la Next Step en bas
-                */
                 className={`flex flex-col justify-between min-h-[220px] bg-slate-900 p-8 rounded-3xl shadow-2xl transition-all duration-300 hover:-translate-y-2 border-t-4 ${colorTheme.border} ${colorTheme.hover}`}
                 onDragStart={(e) => e.preventDefault()}
             >

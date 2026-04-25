@@ -79,7 +79,7 @@ export default function BoardView() {
 
 
     if (isLoading) {
-        return <div className="min-h-screen bg-slate-900 p-8 text-slate-500 animate-pulse text-xl">Chargement de ton espace Focus...</div>;
+        return <div className="min-h-screen bg-slate-900 p-8 text-slate-500 animate-pulse text-xl">Loading your Focus space...</div>;
     }
 
     const colorTheme = board ? (boardColors[board.color] || boardColors['emerald']) : boardColors['emerald'];
@@ -102,13 +102,13 @@ export default function BoardView() {
     const completedCount = allCompletedTasks.length;
     const progressPercentage = totalTasks === 0 ? 0 : Math.round((completedCount / totalTasks) * 100);
 
-    let motivationMessage = "Ajoute une tâche pour commencer !";
+    let motivationMessage = "Add a task to get started !";
     if (totalTasks > 0) {
-        if (progressPercentage === 0) motivationMessage = "C'est parti, on s'y met !";
-        else if (progressPercentage < 50) motivationMessage = "On avance bien !";
-        else if (progressPercentage === 50) motivationMessage = "On est à la moitié !";
-        else if (progressPercentage < 100) motivationMessage = "Tu y es presque, lâche rien !";
-        else motivationMessage = "Masterclass ! Tu as tout explosé ! 🏆";
+        if (progressPercentage === 0) motivationMessage = "Let's get started!";
+        else if (progressPercentage < 50) motivationMessage = "We're making good progress!";
+        else if (progressPercentage === 50) motivationMessage = "We're halfway there!";
+        else if (progressPercentage < 100) motivationMessage = "You're almost there, don't give up!";
+        else motivationMessage = "Masterclass! You've smashed it!";
     }
 
     const toggleFilter = (tagIri) => {
@@ -120,7 +120,7 @@ export default function BoardView() {
     return (
         <div className="min-h-screen bg-slate-900 p-8 text-white">
             <Link to="/" className={`mb-6 inline-block font-medium transition-colors text-slate-400 hover:${colorTheme.text}`}>
-                &larr; Retour aux tableaux
+                &larr; Back to boards
             </Link>
 
             <div className="mb-8">
@@ -168,7 +168,7 @@ export default function BoardView() {
 
                     {Object.values(tagsDict).length > 0 && (
                         <>
-                            <span className="text-sm font-medium text-slate-400">Filtrer :</span>
+                            <span className="text-sm font-medium text-slate-400">Filter :</span>
                             <div className="flex flex-wrap gap-2">
                                 {Object.values(tagsDict).map(tag => {
                                     const isSelected = activeFilters.includes(tag['@id']);
@@ -200,7 +200,7 @@ export default function BoardView() {
 
                 <div className="space-y-4 mb-12">
                     {displayedActiveTasks.length === 0 && allActiveTasks.length > 0 && (
-                        <p className="text-slate-500 italic text-center py-4">Aucune tâche active ne correspond à ce filtre. 🕵️‍♂️</p>
+                        <p className="text-slate-500 italic text-center py-4">No active tasks match this filter.️</p>
                     )}
                     {displayedActiveTasks.map(task => (
                         <TaskItem key={task.id} task={task} onTaskUpdated={loadTasks} tagsDict={tagsDict} />
@@ -210,7 +210,7 @@ export default function BoardView() {
                 {displayedCompletedTasks.length > 0 && (
                     <div className="mt-16 pt-8 border-t border-slate-800">
                         <h2 className="text-2xl font-bold text-slate-400 mb-6 flex items-center gap-3">
-                            <span>✨</span> Victoires
+                            <span>✨</span> Victories
                             <span className="text-sm bg-slate-800 text-slate-300 py-1 px-3 rounded-full">
                 {displayedCompletedTasks.length}
               </span>

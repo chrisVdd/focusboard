@@ -85,12 +85,16 @@ export default function FocusMode() {
         return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
     };
 
-    if (!task) return <div className="min-h-screen bg-slate-950 flex items-center justify-center text-emerald-500">Préparation du tunnel...</div>;
+    if (!task) return <div className="min-h-screen bg-slate-950 flex items-center justify-center text-emerald-500">Preparing the tunnel...</div>;
+
+    const totalSub = task.subTasks?.length || 0;
+    const completedSub = task.subTasks?.filter(s => s.isCompleted).length || 0;
+    const progressPercent = totalSub > 0 ? Math.round((completedSub / totalSub) * 100) : 0;
 
     return (
         <div className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-6 overflow-hidden">
             <button onClick={() => navigate(-1)} className="absolute top-8 left-8 text-slate-500 hover:text-white transition-colors">
-                &larr; Abandonner
+                &larr; Give up
             </button>
 
             <div className={`max-w-2xl w-full text-center space-y-12 transition-all duration-1000 ${isFinishing ? 'scale-110 opacity-0' : 'scale-100'}`}>
@@ -101,8 +105,34 @@ export default function FocusMode() {
 
                 <div className="max-w-md w-full mx-auto bg-slate-900/40 backdrop-blur-md rounded-3xl p-8 border border-white/5 mt-12">
                     <p className="text-[10px] uppercase font-black text-emerald-500/50 tracking-widest mb-6 text-center">
-                        Plan de combat
+                        Battle plan
                     </p>
+
+                    <div className="max-w-md w-full mx-auto bg-slate-900/40 backdrop-blur-md rounded-3xl p-8 border border-white/5 mt-12">
+                        <div className="flex justify-between items-center mb-6">
+                            <p className="text-[10px] uppercase font-black text-emerald-500/50 tracking-widest">
+                                Battle plan
+                            </p>
+                            {totalSub > 0 && (
+                                <span className="text-[10px] font-mono font-bold text-emerald-400">
+                {completedSub}/{totalSub} — {progressPercent}%
+            </span>
+                            )}
+                        </div>
+
+                        {/* 📊 LA BARRE DE PROGRESSION */}
+                        {totalSub > 0 && (
+                            <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden mb-8">
+                                <div
+                                    className="h-full bg-emerald-500 transition-all duration-700 shadow-[0_0_10px_rgba(16,185,129,0.4)]"
+                                    style={{ width: `${progressPercent}%` }}
+                                />
+                            </div>
+                        )}
+
+                    </div>
+
+
                     <div className="space-y-4">
                         {task.subTasks?.length > 0 ? task.subTasks.map(sub => (
                             <button
@@ -124,7 +154,7 @@ export default function FocusMode() {
                 </span>
                             </button>
                         )) : (
-                            <p className="text-slate-600 italic text-center text-sm">Aucune sous-étape définie</p>
+                            <p className="text-slate-600 italic text-center text-sm">No sub-steps defined</p>
                         )}
                     </div>
                 </div>
@@ -155,10 +185,18 @@ export default function FocusMode() {
                         disabled={isFinishing}
                         className="group flex flex-col items-center mx-auto gap-3 text-slate-500 hover:text-emerald-400 transition-all"
                     >
-                        <span className="text-xs font-bold uppercase tracking-widest opacity-50 group-hover:opacity-100">Terminer la mission</span>
+                        <span className="text-xs font-bold uppercase tracking-widest opacity-50 group-hover:opacity-100">Complete the mission</span>
                         <span className="text-3xl grayscale group-hover:grayscale-0 transition-all group-hover:scale-125">✅</span>
                     </button>
                 </div>
+            </div>
+            <div className="mt-12 pb-12 text-center">
+                <button
+                    onClick={() => navigate(-1)} // Revient à la page précédente (le Board)
+                    className="text-slate-600 hover:text-slate-400 text-xs font-black uppercase tracking-[0.2em] transition-colors"
+                >
+                    &larr; Abandonner la mission
+                </button>
             </div>
         </div>
     );

@@ -96,6 +96,35 @@ export default function TaskItem({ task, onTaskUpdated, tagsDict }) {
         } catch (e) { console.error("Error adding subtask:", e); }
     };
 
+    const deleteSub = async (e, subId) => {
+        e.stopPropagation();
+        try {
+            const response = await fetch(`https://localhost/api/sub_tasks/${subId}`, {
+                method: 'DELETE',
+            });
+            if (response.ok && onTaskUpdated) onTaskUpdated();
+        } catch (e) { console.error("Error deleting subtask:", e); }
+    };
+
+    const [editingSubId, setEditingSubId] = useState(null);
+    const [editedSubTitle, setEditedSubTitle] = useState("");
+
+    const saveSubTitle = async (sub) => {
+        if (editedSubTitle.trim() === "" || editedSubTitle === sub.title) {
+            setEditingSubId(null);
+            return;
+        }
+        try {
+            await fetch(`https://localhost${sub['@id']}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/merge-patch+json' },
+                body: JSON.stringify({ title: editedSubTitle })
+            });
+            setEditingSubId(null);
+            onTaskUpdated();
+        } catch (e) { console.error(e); }
+    };
+
     const toggleSub = async (sub) => {
         try {
             const response = await fetch(`https://localhost${sub['@id']}`, {
@@ -179,7 +208,7 @@ export default function TaskItem({ task, onTaskUpdated, tagsDict }) {
 
                 {/* 🧱 LISTE DES SOUS-TÂCHES */}
                 {!isCompleted && (
-                    <div className="mt-4 ml-2 space-y-2 border-l-2 border-slate-700/50 pl-4">
+                    <div className="mt-4 mb-4 ml-2 space-y-2 border-l-2 border-slate-700/50 pl-4">
                         {subTasks.map(sub => (
                             <div key={sub.id} className="flex items-center gap-3 group/sub">
                                 <input
@@ -208,6 +237,47 @@ export default function TaskItem({ task, onTaskUpdated, tagsDict }) {
                         />
                     </div>
                 )}
+                {subTasks.map(sub => (
+                    <div key={sub.id} className="flex items-center gap-3 group/sub">
+                        <input
+                            type="checkbox"
+                            checked={sub.isCompleted}
+                            onChange={() => toggleSub(sub)}
+                            className="w-4 h-4 rounded border-slate-700 bg-slate-900 text-emerald-500 cursor-pointer"
+                        />
+
+                        {editingSubId === sub.id ? (
+                            <input
+                                autoFocus
+                                value={editedSubTitle}
+                                onChange={(e) => setEditedSubTitle(e.target.value)}
+                                onBlur={() => setEditingSubId(null)}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter') saveSubTitle(sub);
+                                    if (e.key === 'Escape') setEditingSubId(null);
+                                }}
+                                className="bg-slate-900 text-sm text-white border-b border-emerald-500 outline-none flex-1 py-0.5"
+                            />
+                        ) : (
+                            <span
+                                onClick={() => { setEditingSubId(sub.id); setEditedSubTitle(sub.title); }}
+                                className={`text-sm flex-1 cursor-text transition-colors ${
+                                    sub.isCompleted ? 'line-through text-slate-600' : 'text-slate-400 hover:text-slate-200'
+                                }`}
+                            >
+                {sub.title}
+            </span>
+                        )}
+
+                        {/* Bouton de suppression discret qui n'apparaît qu'au survol de la ligne */}
+                        <button
+                            onClick={(e) => deleteSub(e, sub.id)}
+                            className="opacity-0 group-hover/sub:opacity-100 text-slate-600 hover:text-rose-500 transition-all text-xs"
+                        >
+                            ✕
+                        </button>
+                    </div>
+                ))}
             </div>
 
             <div className="flex flex-col items-end gap-3 shrink-0">
