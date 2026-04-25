@@ -14,6 +14,9 @@ export default function BoardView() {
 
     const [activeFilters, setActiveFilters] = useState([]);
 
+    const [isEditingTitle, setIsEditingTitle] = useState(false);
+    const [editedTitle, setEditedTitle] = useState("");
+
     const loadTasks = () => {
         fetch('https://localhost/api/tasks', { headers: { 'Accept': 'application/ld+json' } })
             .then(res => res.json())
@@ -47,6 +50,33 @@ export default function BoardView() {
                 setIsLoading(false);
             });
     }, [id]);
+
+
+    const saveBoardTitle = async () => {
+        if (editedTitle.trim() === "" || editedTitle === board.title) {
+            setIsEditingTitle(false);
+            setEditedTitle(board.title);
+            return;
+        }
+
+        try {
+            const response = await fetch(`https://localhost/api/boards/${id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/merge-patch+json' },
+                body: JSON.stringify({ title: editedTitle })
+            });
+            if (response.ok) {
+                const updatedBoard = await response.json();
+                setBoard(updatedBoard);
+                setIsEditingTitle(false);
+            }
+        } catch (e) {
+            console.error("Erreur sauvegarde titre board:", e);
+        }
+    };
+
+
+
 
     if (isLoading) {
         return <div className="min-h-screen bg-slate-900 p-8 text-slate-500 animate-pulse text-xl">Chargement de ton espace Focus...</div>;
@@ -93,9 +123,31 @@ export default function BoardView() {
                 &larr; Retour aux tableaux
             </Link>
 
-            <h1 className={`text-4xl font-bold mb-8 border-b-2 pb-4 ${colorTheme.text} ${colorTheme.border}`}>
-                {board?.title}
-            </h1>
+            <div className="mb-8">
+                {isEditingTitle ? (
+                    <input
+                        autoFocus
+                        value={editedTitle}
+                        onChange={(e) => setEditedTitle(e.target.value)}
+                        onBlur={saveBoardTitle}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') saveBoardTitle();
+                            if (e.key === 'Escape') {
+                                setEditedTitle(board.title);
+                                setIsEditingTitle(false);
+                            }
+                        }}
+                        className={`text-4xl font-bold bg-transparent border-b-2 outline-none w-full pb-4 ${colorTheme.text} ${colorTheme.border}`}
+                    />
+                ) : (
+                    <h1
+                        onClick={() => setIsEditingTitle(true)}
+                        className={`text-4xl font-bold border-b-2 pb-4 cursor-pointer hover:opacity-80 transition-all ${colorTheme.text} ${colorTheme.border}`}
+                    >
+                        {board?.title}
+                    </h1>
+                )}
+            </div>
 
             <div className="max-w-3xl">
 

@@ -218,7 +218,6 @@ class Task
     public function removeSubTask(SubTask $subTask): static
     {
         if ($this->subTasks->removeElement($subTask)) {
-            // set the owning side to null (unless already changed)
             if ($subTask->getTask() === $this) {
                 $subTask->setTask(null);
             }

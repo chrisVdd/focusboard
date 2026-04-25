@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import confetti from 'canvas-confetti'; // 💡 Ton nouveau moteur de dopamine
+import confetti from 'canvas-confetti';
 
 export default function FocusMode() {
     const { taskId } = useParams();
@@ -61,6 +61,24 @@ export default function FocusMode() {
         }
     };
 
+    const toggleSub = async (sub) => {
+        try {
+            const response = await fetch(`https://localhost${sub['@id']}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/merge-patch+json' },
+                body: JSON.stringify({ isCompleted: !sub.isCompleted })
+            });
+            if (response.ok) {
+
+                const res = await fetch(`https://localhost/api/tasks/${taskId}`, { headers: { 'Accept': 'application/ld+json' } });
+                const data = await res.json();
+                setTask(data);
+            }
+        } catch (e) { console.error(e); }
+    };
+
+
+
     const formatTime = (seconds) => {
         const mins = Math.floor(seconds / 60);
         const secs = seconds % 60;
@@ -71,7 +89,6 @@ export default function FocusMode() {
 
     return (
         <div className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-6 overflow-hidden">
-            {/* Retour discret au tableau */}
             <button onClick={() => navigate(-1)} className="absolute top-8 left-8 text-slate-500 hover:text-white transition-colors">
                 &larr; Abandonner
             </button>
@@ -81,6 +98,37 @@ export default function FocusMode() {
                     <p className="text-emerald-500 font-black tracking-[0.3em] uppercase text-sm mb-4">Objectif Focus</p>
                     <h1 className="text-5xl md:text-7xl font-bold leading-tight">{task.title}</h1>
                 </header>
+
+                <div className="max-w-md w-full mx-auto bg-slate-900/40 backdrop-blur-md rounded-3xl p-8 border border-white/5 mt-12">
+                    <p className="text-[10px] uppercase font-black text-emerald-500/50 tracking-widest mb-6 text-center">
+                        Plan de combat
+                    </p>
+                    <div className="space-y-4">
+                        {task.subTasks?.length > 0 ? task.subTasks.map(sub => (
+                            <button
+                                key={sub.id}
+                                onClick={() => toggleSub(sub)}
+                                className={`w-full flex items-center gap-4 p-4 rounded-2xl transition-all ${
+                                    sub.isCompleted
+                                        ? 'bg-slate-950/30 opacity-40'
+                                        : 'bg-slate-800/50 hover:bg-slate-800 border border-white/5 shadow-lg'
+                                }`}
+                            >
+                                <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${
+                                    sub.isCompleted ? 'bg-emerald-500 border-emerald-500' : 'border-slate-600'
+                                }`}>
+                                    {sub.isCompleted && <span className="text-white text-xs">✓</span>}
+                                </div>
+                                <span className={`text-lg ${sub.isCompleted ? 'line-through' : 'text-slate-200'}`}>
+                    {sub.title}
+                </span>
+                            </button>
+                        )) : (
+                            <p className="text-slate-600 italic text-center text-sm">Aucune sous-étape définie</p>
+                        )}
+                    </div>
+                </div>
+
 
                 {/* TIMER POMODORO */}
                 <div className="relative inline-block">
