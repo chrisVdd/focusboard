@@ -19,16 +19,16 @@ class SubTask
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups('task:read', 'subtask:write')]
+    #[Groups(['task:read', 'subtask:write'])]
     private ?string $title = null;
 
     #[ORM\Column]
-    #[Groups('task:read', 'subtask:write')]
-    private ?bool $isCompleted = null;
+    #[Groups(['task:read', 'subtask:write'])]
+    private bool $isCompleted = false;
 
     #[ORM\ManyToOne(inversedBy: 'subTasks')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups('subtask:write')]
+    #[Groups(['subtask:write'])]
     private ?Task $task = null;
 
     public function getId(): ?int
@@ -49,6 +49,11 @@ class SubTask
     }
 
     public function isCompleted(): ?bool
+    {
+        return $this->isCompleted;
+    }
+
+    public function getIsCompleted(): bool
     {
         return $this->isCompleted;
     }
