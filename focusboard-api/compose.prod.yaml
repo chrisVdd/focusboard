@@ -20,6 +20,7 @@ services:
       - "traefik.http.routers.focusboard-api.rule=Host(`api.92.5.38.37.nip.io`)"
       - "traefik.http.routers.focusboard-api.entrypoints=web"
       - "traefik.http.services.focusboard-api.loadbalancer.server.port=80"
+      - "traefik.docker.network=web_proxy"
 
     networks:
       - web_proxy
