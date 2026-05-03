@@ -7,9 +7,8 @@ WORKDIR /app
 # Copy dependency files
 COPY package*.json ./
 
-# Use install instead of ci to allow architecture-specific binary resolution (e.g., for esbuild)
-# Removed --silent to ensure build logs are visible if needed
-RUN npm install
+# Install dependencies while ignoring strict peer dependency conflicts (e.g., Vite vs Tailwind version mismatch)
+RUN npm install --legacy-peer-deps
 
 # Copy the rest of the application code
 COPY . .
