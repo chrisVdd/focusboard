@@ -4,9 +4,12 @@ FROM node:20-alpine AS build_stage
 # Set working directory inside the container
 WORKDIR /app
 
-# Copy dependency files and install cleanly
+# Copy dependency files
 COPY package*.json ./
-RUN npm ci --silent
+
+# Use install instead of ci to allow architecture-specific binary resolution (e.g., for esbuild)
+# Removed --silent to ensure build logs are visible if needed
+RUN npm install
 
 # Copy the rest of the application code
 COPY . .
