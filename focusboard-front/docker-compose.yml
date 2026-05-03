@@ -1,0 +1,21 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: focusboard_front_app
+    restart: unless-stopped
+    labels:
+      # Enable Traefik routing for this container
+      - "traefik.enable=true"
+      # Route traffic from the main domain to the React app
+      - "traefik.http.routers.focusboard-front.rule=Host(`92.5.38.37.nip.io`)"
+      - "traefik.http.routers.focusboard-front.entrypoints=web"
+      - "traefik.http.services.focusboard-front.loadbalancer.server.port=80"
+    networks:
+      - web_proxy
+
+networks:
+  # Connect to the global proxy network
+  web_proxy:
+    external: true
