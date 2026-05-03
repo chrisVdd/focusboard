@@ -11,7 +11,7 @@ services:
       - "traefik.http.routers.focusboard-front.entrypoints=web"
       - "traefik.http.services.focusboard-front.loadbalancer.server.port=80"
       - "traefik.docker.network=web_proxy"
-      -
+
     networks:
       - web_proxy
 
