@@ -75,9 +75,6 @@ export default function BoardView() {
         }
     };
 
-
-
-
     if (isLoading) {
         return <div className="min-h-screen bg-slate-900 p-8 text-slate-500 animate-pulse text-xl">Loading your Focus space...</div>;
     }
