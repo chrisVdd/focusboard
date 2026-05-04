@@ -10,8 +10,8 @@ services:
       APP_SECRET: ${APP_SECRET}
       MERCURE_PUBLISHER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET}
       MERCURE_SUBSCRIBER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET}
-      SERVER_NAME: "http://api.92.5.38.37.nip.io"
-      CORS_ALLOW_ORIGIN: "^https?://(92\\.5\\.38\\.37\\.nip\\.io)$"
+      SERVER_NAME: "http://focusboard-api.92.5.38.37.nip.io"
+      CORS_ALLOW_ORIGIN: "^https?://(focusboard\\.92\\.5\\.38\\.37\\.nip\\.io)$"
 
     ports: !reset []
 
@@ -20,6 +20,7 @@ services:
       - "traefik.http.routers.focusboard-api.rule=Host(`api.92.5.38.37.nip.io`)"
       - "traefik.http.routers.focusboard-api.entrypoints=web"
       - "traefik.http.services.focusboard-api.loadbalancer.server.port=80"
+      - "traefik.docker.network=web_proxy"
 
     networks:
       - web_proxy
@@ -27,6 +28,22 @@ services:
 
   database:
     ports: !reset []
+
+  adminer:
+    image: adminer:standalone
+    container_name: focusboard_adminer
+    restart: unless-stopped
+    environment:
+      ADMINER_DEFAULT_SERVER: database
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.focusboard-db.rule=Host(`focusboard-db.92.5.38.37.nip.io`)"
+      - "traefik.http.routers.focusboard-db.entrypoints=web"
+      - "traefik.http.services.focusboard-db.loadbalancer.server.port=8080"
+      - "traefik.docker.network=web_proxy"
+    networks:
+      - web_proxy
+      - default
 
 networks:
   web_proxy:

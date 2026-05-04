@@ -9,7 +9,7 @@ COPY package*.json ./
 
 # Use install instead of ci to allow architecture-specific binary resolution (e.g., for esbuild)
 # Removed --silent to ensure build logs are visible if needed
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 # Copy the rest of the application code
 COPY . .

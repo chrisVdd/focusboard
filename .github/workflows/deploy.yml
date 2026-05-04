@@ -1,0 +1,43 @@
+name: Production Deployment
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy to Oracle Cloud
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Execute SSH Deployment Commands
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          # Prevent SSH strict host key checking issues
+          script_stop: true
+          script: |
+            echo "[INFO] Starting deployment process..."
+            
+            # Navigate to the main project directory
+            cd /home/ubuntu/apps/focusboard
+            
+            # Pull the latest code
+            echo "[INFO] Pulling latest changes from main branch..."
+            git pull origin main
+            
+            # Deploy API and Database Tools
+            echo "[INFO] Rebuilding and starting Backend services..."
+            cd focusboard-api
+            docker compose -f compose.yaml -f compose.prod.yaml up -d --build
+            
+            # Deploy Frontend
+            echo "[INFO] Rebuilding and starting Frontend services..."
+            cd ../focusboard-front
+            docker compose up -d --build
+            
+            echo "[SUCCESS] Deployment completed successfully!"
