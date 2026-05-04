@@ -25,11 +25,10 @@ jobs:
             # Navigate to the main project directory
             cd /home/ubuntu/apps/focusboard
             
-            # Fetch all branches and switch to the target branch
-            echo "[INFO] Fetching and switching to branch: ${{ github.ref_name }}..."
+            # Force the server to exactly match the remote branch (discards local changes)
+            echo "[INFO] Fetching and enforcing strict sync with branch: ${{ github.ref_name }}..."
             git fetch origin
-            git checkout ${{ github.ref_name }}
-            git pull origin ${{ github.ref_name }}
+            git reset --hard origin/${{ github.ref_name }}
             
             # Deploy API and Database Tools
             echo "[INFO] Rebuilding and starting Backend services..."
