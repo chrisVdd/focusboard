@@ -49,7 +49,7 @@ export default function BoardForm({ onBoardAdded }) {
 
                     {isPickerOpen && (
                         <div className="absolute top-full mt-4 left-0 bg-slate-900 border border-slate-700 p-4 rounded-2xl shadow-2xl z-50 w-72 animate-in fade-in zoom-in duration-200">
-                            <p className="text-[10px] text-slate-500 mb-3 font-bold uppercase tracking-widest text-center">Choisir un mood</p>
+                            <p className="text-[10px] text-slate-500 mb-3 font-bold uppercase tracking-widest text-center">Choose a mood</p>
                             <div className="grid grid-cols-4 gap-2">
                                 {EMOJI_SUGGESTIONS.map(emoji => (
                                     <button
@@ -71,7 +71,7 @@ export default function BoardForm({ onBoardAdded }) {
                     type="text"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    placeholder="Nom du projet..."
+                    placeholder="Board name..."
                     disabled={isSubmitting}
                     className="flex-1 text-3xl font-bold bg-transparent text-white placeholder-slate-600 focus:outline-none focus:placeholder-slate-500 border-b-2 border-slate-700/50 focus:border-emerald-500 transition-all"
                 />
@@ -97,7 +97,7 @@ export default function BoardForm({ onBoardAdded }) {
                     disabled={isSubmitting || !title.trim()}
                     className="bg-emerald-600 hover:bg-emerald-500 text-white px-10 py-3 rounded-xl font-bold transition-all active:scale-95 disabled:opacity-30 shadow-[0_0_20px_rgba(16,185,129,0.2)]"
                 >
-                    {isSubmitting ? '...' : 'Créer'}
+                    {isSubmitting ? '...' : 'Create'}
                 </button>
             </div>
         </form>

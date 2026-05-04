@@ -17,14 +17,11 @@ function Home() {
     const [boards, setBoards] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
-    // 💡 Configuration robuste des capteurs
     const sensors = useSensors(
         useSensor(MouseSensor, {
-            // On doit bouger de 10px pour confirmer que c'est un drag et non un clic
             activationConstraint: { distance: 10 },
         }),
         useSensor(TouchSensor, {
-            // Appui long (250ms) pour le mobile pour éviter les conflits de scroll
             activationConstraint: { delay: 250, tolerance: 5 },
         })
     );
@@ -79,11 +76,11 @@ function Home() {
                         <span className="text-5xl mb-4 block">🏆</span>
                         <h2 className="text-2xl font-bold text-yellow-500">Victory Lane</h2>
                         <p className="text-xs text-yellow-200/50 italic mt-2 leading-relaxed">
-                            "Le panthéon de tes succès."
+                            "A hall of fame for your achievements."
                         </p>
                     </div>
                     <div className="text-[10px] font-black text-yellow-600 uppercase tracking-widest group-hover:text-yellow-400 transition-colors">
-                        Voir les trophées →
+                        See the trophies →
                     </div>
                 </Link>
 

@@ -1,0 +1,21 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: "focusboard_front_app"
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.focusboard-front.rule=Host(`focusboard-app.92.5.38.37.nip.io`)"
+      - "traefik.http.routers.focusboard-front.entrypoints=web"
+      - "traefik.http.services.focusboard-front.loadbalancer.server.port=80"
+      - "traefik.docker.network=web_proxy"
+
+    networks:
+      - web_proxy
+
+networks:
+  # Connect to the global proxy network
+  web_proxy:
+    external: true
