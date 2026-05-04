@@ -3,6 +3,7 @@
 services:
   php:
     image: ${IMAGES_PREFIX:-}focusboard-api-prod
+    container_name: "focusboard-php"
     build:
       context: .
       target: frankenphp_prod
@@ -28,11 +29,12 @@ services:
       - default
 
   database:
+    container_name: "focusboard-database"
     ports: !reset []
 
   adminer:
     image: adminer:standalone
-    container_name: focusboard_adminer
+    container_name: "focusboard_adminer"
     restart: unless-stopped
     environment:
       ADMINER_DEFAULT_SERVER: database

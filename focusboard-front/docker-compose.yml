@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: focusboard_front_app
+    container_name: "focusboard_front_app"
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
