@@ -5,7 +5,7 @@ services:
     image: ${IMAGES_PREFIX:-}focusboard-api-prod
     build:
       context: .
-      target: frankenphp_prod
+      target: frankenphp_dev
     environment:
       APP_SECRET: ${APP_SECRET}
       APP_ENV: dev
