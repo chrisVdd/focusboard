@@ -79,11 +79,11 @@ function Home() {
                         <span className="text-5xl mb-4 block">🏆</span>
                         <h2 className="text-2xl font-bold text-yellow-500">Victory Lane</h2>
                         <p className="text-xs text-yellow-200/50 italic mt-2 leading-relaxed">
-                            "Le panthéon de tes succès."
+                            "A hall of fame for your achievements."
                         </p>
                     </div>
                     <div className="text-[10px] font-black text-yellow-600 uppercase tracking-widest group-hover:text-yellow-400 transition-colors">
-                        Voir les trophées →
+                        See the trophies →
                     </div>
                 </Link>
 
