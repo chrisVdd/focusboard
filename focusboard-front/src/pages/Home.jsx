@@ -17,14 +17,11 @@ function Home() {
     const [boards, setBoards] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
-    // 💡 Configuration robuste des capteurs
     const sensors = useSensors(
         useSensor(MouseSensor, {
-            // On doit bouger de 10px pour confirmer que c'est un drag et non un clic
             activationConstraint: { distance: 10 },
         }),
         useSensor(TouchSensor, {
-            // Appui long (250ms) pour le mobile pour éviter les conflits de scroll
             activationConstraint: { delay: 250, tolerance: 5 },
         })
     );

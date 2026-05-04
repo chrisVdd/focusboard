@@ -97,7 +97,7 @@ export default function BoardForm({ onBoardAdded }) {
                     disabled={isSubmitting || !title.trim()}
                     className="bg-emerald-600 hover:bg-emerald-500 text-white px-10 py-3 rounded-xl font-bold transition-all active:scale-95 disabled:opacity-30 shadow-[0_0_20px_rgba(16,185,129,0.2)]"
                 >
-                    {isSubmitting ? '...' : 'Créer'}
+                    {isSubmitting ? '...' : 'Create'}
                 </button>
             </div>
         </form>
