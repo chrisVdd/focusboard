@@ -7,7 +7,7 @@ services:
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.focusboard-front.rule=Host(`92.5.38.37.nip.io`)"
+      - "traefik.http.routers.focusboard-front.rule=Host(`focusboard.92.5.38.37.nip.io`)"
       - "traefik.http.routers.focusboard-front.entrypoints=web"
       - "traefik.http.services.focusboard-front.loadbalancer.server.port=80"
       - "traefik.docker.network=web_proxy"
