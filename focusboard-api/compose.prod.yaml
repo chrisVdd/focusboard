@@ -12,14 +12,14 @@ services:
       APP_SECRET: ${APP_SECRET}
       MERCURE_PUBLISHER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET}
       MERCURE_SUBSCRIBER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET}
-      # 3. Keep the Traefik host routing fix
+
       SERVER_NAME: ":80"
-      CORS_ALLOW_ORIGIN: "^https?://(focusboard\\.92\\.5\\.38\\.37\\.nip\\.io)$"
+      CORS_ALLOW_ORIGIN: "^https?://(focusboard-app\\.92\\.5\\.38\\.37\\.nip\\.io)$"
     ports: !reset []
 
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.focusboard-api.rule=Host(`api.92.5.38.37.nip.io`)"
+      - "traefik.http.routers.focusboard-api.rule=Host(`focusboard-api.92.5.38.37.nip.io`)"
       - "traefik.http.routers.focusboard-api.entrypoints=web"
       - "traefik.http.services.focusboard-api.loadbalancer.server.port=80"
       - "traefik.docker.network=web_proxy"
