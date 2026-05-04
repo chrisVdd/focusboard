@@ -8,11 +8,11 @@ services:
       target: frankenphp_prod
     environment:
       APP_SECRET: ${APP_SECRET}
+      APP_ENV: dev
       MERCURE_PUBLISHER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET}
       MERCURE_SUBSCRIBER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET}
-      SERVER_NAME: "http://focusboard-api.92.5.38.37.nip.io"
+      SERVER_NAME: ":80"
       CORS_ALLOW_ORIGIN: "^https?://(focusboard\\.92\\.5\\.38\\.37\\.nip\\.io)$"
-
     ports: !reset []
 
     labels:
