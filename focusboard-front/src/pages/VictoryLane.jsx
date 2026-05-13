@@ -15,30 +15,26 @@ export default function VictoryLane() {
             .catch(() => setIsLoading(false));
     }, []);
 
-    // --- 🎮 LOGIQUE RPG (Calculated Values) ---
     const completedTasks = allTasks.filter(t => t.isCompleted);
 
-    // Fonction pour calculer l'XP d'UNE seule tâche (réutilisable)
+
     const calculateTaskTotalXP = (task) => {
-        let xp = 10; // Base
+        let xp = 10;
         const subs = task.subTasks || [];
         const completedSubs = subs.filter(s => s.isCompleted).length;
 
-        xp += (completedSubs * 2); // 2 XP par sous-tâche
+        xp += (completedSubs * 2);
 
-        // Bonus Full Clear : Uniquement si la tâche a des sous-tâches ET qu'elles sont TOUTES finies
         if (subs.length > 0 && completedSubs === subs.length) {
             xp += 5;
         }
         return xp;
     };
 
-    // Calcul du score global
     const totalXP = completedTasks.reduce((acc, task) => acc + calculateTaskTotalXP(task), 0);
     const level = Math.floor(totalXP / 100) + 1;
     const xpProgress = totalXP % 100;
 
-    // Calcul du Streak 🔥
     const calculateStreak = () => {
         const dates = completedTasks
             .filter(t => t.completedAt)
@@ -50,7 +46,6 @@ export default function VictoryLane() {
         const today = new Date().toDateString();
         const yesterday = new Date(Date.now() - 86400000).toDateString();
 
-        // Si aucune victoire aujourd'hui ou hier, le streak tombe à 0
         if (uniqueDates[0] !== today && uniqueDates[0] !== yesterday) return 0;
 
         let streak = 0;
@@ -67,7 +62,6 @@ export default function VictoryLane() {
 
     const currentStreak = calculateStreak();
 
-    // Groupement par date pour l'affichage[cite: 7]
     const groupedWins = completedTasks.reduce((groups, task) => {
         const date = task.completedAt ? new Date(task.completedAt).toLocaleDateString('en-EN', {
             weekday: 'long', day: 'numeric', month: 'long'
@@ -114,7 +108,6 @@ export default function VictoryLane() {
                     </div>
                 </div>
 
-                {/* Stats Cards[cite: 7] */}
                 <div className="flex justify-center gap-6">
                     <div className="bg-slate-900/40 p-6 rounded-3xl border border-white/5 min-w-[160px]">
                         <p className="text-4xl font-black text-yellow-500 mb-1">{totalXP}</p>
@@ -126,7 +119,6 @@ export default function VictoryLane() {
                     </div>
                 </div>
 
-                {/* --- AJOUT : LÉGENDE DU BARÈME RPG --- */}
                 <div className="max-w-md mx-auto mb-12 grid grid-cols-3 gap-2 bg-slate-900/30 p-4 m-2 rounded-2xl border border-white/5 shadow-inner">
                     <div className="text-center">
                         <p className="text-xs font-black text-yellow-500">10 XP</p>
