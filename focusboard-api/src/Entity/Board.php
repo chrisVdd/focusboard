@@ -43,6 +43,10 @@ class Board
     #[Groups(['board:read', 'board:write'])]
     private ?int $position = null;
 
+    #[ORM\ManyToOne(inversedBy: 'boards')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $owner = null;
+
     public function __construct()
     {
         $this->tasks = new ArrayCollection();
@@ -121,5 +125,17 @@ class Board
     public function setPosition(?int $position): static
     {
         $this->position = $position; return $this;
+    }
+
+    public function getOwner(): ?User
+    {
+        return $this->owner;
+    }
+
+    public function setOwner(?User $owner): static
+    {
+        $this->owner = $owner;
+
+        return $this;
     }
 }
