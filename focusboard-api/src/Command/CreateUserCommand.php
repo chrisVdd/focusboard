@@ -32,7 +32,7 @@ class CreateUserCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         $user = new User();
-        $user->setUsername('christina');
+        $user->setUsername('test');
         $user->setRoles(['ROLE_USER']);
         $hashedPassword = $this->passwordHasher->hashPassword($user, 'password123');
         $user->setPassword($hashedPassword);

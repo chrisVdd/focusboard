@@ -1,4 +1,4 @@
-import { Routes, Route, Link, Navigate } from 'react-router-dom';
+import { Routes, Route, Link, Navigate, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from "react";
 import Home from "./pages/Home.jsx";
 import BoardView from "./pages/BoardView.jsx";
@@ -8,12 +8,15 @@ import LevelBadge from "./components/LevelBadge.jsx";
 import Login from "./pages/Login.jsx";
 
 function App() {
+
     const [tasks, setTasks] = useState([]);
-    const token = localStorage.getItem("token");
+    const [token, setToken] = useState(localStorage.getItem("token"));
+    const navigate = useNavigate();
+
     const isAuthenticated = !!token;
 
     const refreshTasks = async () => {
-        const token = localStorage.getItem("token");
+
         if (!token) return;
 
         try {
@@ -23,13 +26,7 @@ function App() {
                     'Authorization': `Bearer ${token}`
                 }
             });
-
-            if (res.status === 401) {
-                localStorage.removeItem("token");
-                window.location.href = "/login";
-                return;
-            }
-
+            if (res.status === 401) handleLogout();
             const data = await res.json();
             setTasks(data.member || []);
         } catch (err) {
@@ -38,6 +35,17 @@ function App() {
     };
 
     useEffect(() => { refreshTasks(); }, [token]);
+
+    const handleLogin = (newToken) => {
+        localStorage.setItem("token", newToken);
+        setToken(newToken);
+    };
+
+    const handleLogout = () => {
+        localStorage.removeItem("token");
+        setToken(null);
+        navigate("/login");
+    };
 
     return (
         <div className="min-h-screen bg-slate-950 text-white font-sans selection:bg-yellow-500/30">
@@ -55,13 +63,20 @@ function App() {
                             Victory Lane 🏆
                         </Link>
                         <LevelBadge tasks={tasks} />
+
+                        <button
+                            onClick={handleLogout}
+                            className="text-[10px] font-black text-red-500/70 hover:text-red-400 uppercase tracking-widest border border-red-500/20 px-3 py-1 rounded-md transition-all"
+                        >
+                            Logout
+                        </button>
                     </div>
                 </header>
             )}
 
             <main>
                 <Routes>
-                    <Route path="/login" element={<Login />} />
+                    <Route path="/login" element={!isAuthenticated ? <Login onLogin={handleLogin} /> : <Navigate to="/" />} />
                     <Route path="/" element={isAuthenticated ? <Home /> : <Navigate to="/login" />} />
                     <Route path="/board/:id" element={isAuthenticated ? <BoardView onTaskUpdated={refreshTasks} /> : <Navigate to="/login" />} />
                     <Route path="/victory-lane" element={isAuthenticated ? <VictoryLane /> : <Navigate to="/login" />} />
