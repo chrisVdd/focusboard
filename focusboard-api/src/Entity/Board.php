@@ -3,6 +3,12 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Delete;
+use App\State\OwnerProcessor;
 use App\Repository\BoardRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -11,9 +17,16 @@ use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: BoardRepository::class)]
 #[ApiResource(
+    operations: [
+        new GetCollection(),
+        new Get(),
+        new Post(processor: OwnerProcessor::class),
+        new Patch(processor: OwnerProcessor::class),
+        new Delete()
+    ],
     normalizationContext: ['groups' => ['board:read']],
     denormalizationContext: ['groups' => ['board:write']],
-    order: ['position' => 'ASC'],
+    order: ['position' => 'ASC']
 )]
 class Board
 {

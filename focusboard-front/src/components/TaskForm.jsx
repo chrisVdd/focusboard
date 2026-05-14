@@ -21,11 +21,14 @@ export default function TaskForm({ boardId, onTaskAdded, colorTheme, availableTa
 
         setIsSubmitting(true);
 
+        const token = localStorage.getItem("token");
+
         fetch('https://localhost/api/tasks', {
             method: 'POST',
             headers: {
                 'Accept': 'application/ld+json',
-                'Content-Type': 'application/ld+json'
+                'Content-Type': 'application/ld+json',
+                'Authorization': `Bearer ${token}`,
             },
             body: JSON.stringify({
                 title: title,

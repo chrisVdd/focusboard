@@ -141,7 +141,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeBoard(Board $board): static
     {
         if ($this->boards->removeElement($board)) {
-            // set the owning side to null (unless already changed)
             if ($board->getOwner() === $this) {
                 $board->setOwner(null);
             }

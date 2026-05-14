@@ -5,8 +5,15 @@ export default function VictoryLane() {
     const [allTasks, setAllTasks] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
+    const token = localStorage.getItem("token");
+
     useEffect(() => {
-        fetch('https://localhost/api/tasks', { headers: { 'Accept': 'application/ld+json' } })
+        fetch('https://localhost/api/tasks', {
+            headers: {
+                'Accept': 'application/ld+json',
+                'Authorization': `Bearer ${token}`,
+            }
+        })
             .then(res => res.json())
             .then(data => {
                 setAllTasks(data.member || []);

@@ -3,6 +3,7 @@ import { boardColors } from "../utils/colors.js";
 import { useNavigate } from "react-router-dom";
 
 export default function TaskItem({ task, onTaskUpdated, tagsDict }) {
+
     const navigate = useNavigate();
     const [isCompleted, setIsCompleted] = useState(task.isCompleted ?? false);
     const [isUpdating, setIsUpdating] = useState(false);
@@ -16,13 +17,19 @@ export default function TaskItem({ task, onTaskUpdated, tagsDict }) {
     const completedSub = subTasks.filter(s => s.isCompleted).length;
     const progressPercent = subTasks.length > 0 ? Math.round((completedSub / subTasks.length) * 100) : 0;
 
+    const token = localStorage.getItem("token");
+
     const toggleCompletion = () => {
         const newValue = !isCompleted;
         setIsCompleted(newValue);
         setIsUpdating(true);
+
         fetch(`https://localhost${task['@id']}`, {
             method: 'PATCH',
-            headers: { 'Content-Type': 'application/merge-patch+json' },
+            headers: {
+                'Content-Type': 'application/merge-patch+json',
+                'Authorization': `Bearer ${token}`,
+            },
             body: JSON.stringify({ isCompleted: newValue, completedAt: newValue ? new Date().toISOString() : null })
         }).then(() => {
             setIsUpdating(false);
@@ -43,7 +50,10 @@ export default function TaskItem({ task, onTaskUpdated, tagsDict }) {
     const toggleSub = async (sub) => {
         await fetch(`https://localhost${sub['@id']}`, {
             method: 'PATCH',
-            headers: { 'Content-Type': 'application/merge-patch+json' },
+            headers: {
+                'Content-Type': 'application/merge-patch+json',
+                'Authorization': `Bearer ${token}`,
+            },
             body: JSON.stringify({ isCompleted: !sub.isCompleted })
         });
         onTaskUpdated();
@@ -73,12 +83,11 @@ export default function TaskItem({ task, onTaskUpdated, tagsDict }) {
                     </div>
                 )}
 
-                {/* Titre */}
+
                 <div onClick={() => setIsEditingTitle(true)} className={`text-xl cursor-pointer hover:text-emerald-400 ${isCompleted ? 'line-through text-slate-500' : 'text-slate-200 font-bold'}`}>
                     {task.title}
                 </div>
 
-                {/* Liste des sous-tâches (UNE SEULE FOIS ICI) */}
                 {!isCompleted && (
                     <div className="mt-4 space-y-2 border-l-2 border-slate-700/50 pl-4">
                         {subTasks.map(sub => (
@@ -92,13 +101,12 @@ export default function TaskItem({ task, onTaskUpdated, tagsDict }) {
                     </div>
                 )}
 
-                {/* Focus Button */}
                 {!isCompleted && (
                     <button onClick={() => navigate(`/focus/${task.id}`)} className="mt-4 bg-emerald-500/10 text-emerald-500 text-[10px] font-black px-3 py-1 rounded-md hover:bg-emerald-500 hover:text-white transition-all uppercase tracking-widest">⚡ Start Focus</button>
                 )}
             </div>
 
-            {/* Tags */}
+
             <div className="flex flex-wrap justify-end gap-2 shrink-0">
                 {task.tags?.map(iri => {
                     const tag = tagsDict[iri];

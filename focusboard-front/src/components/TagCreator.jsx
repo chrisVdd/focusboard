@@ -14,11 +14,14 @@ export default function TagCreator({ onTagAdded }) {
 
         setIsSubmitting(true);
 
+        const token = localStorage.getItem("token");
+
         fetch('https://localhost/api/tags', {
             method: 'POST',
             headers: {
                 'Accept': 'application/ld+json',
                 'Content-Type': 'application/ld+json',
+                'Authorization': `Bearer ${token}`,
             },
             body: JSON.stringify({
                 name: name,

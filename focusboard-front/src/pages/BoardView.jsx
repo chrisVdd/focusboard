@@ -16,8 +16,15 @@ export default function BoardView({ onTaskUpdated }) {
     const [isEditingTitle, setIsEditingTitle] = useState(false);
     const [editedTitle, setEditedTitle] = useState("");
 
+    const token = localStorage.getItem("token");
+
     const loadTasks = () => {
-        fetch('https://localhost/api/tasks', { headers: { 'Accept': 'application/ld+json' } })
+        fetch('https://localhost/api/tasks', {
+            headers: {
+                'Accept': 'application/ld+json',
+                'Authorization': `Bearer ${token}`,
+            }
+        })
             .then(res => res.json())
             .then(tasksData => {
                 const filteredTasks = (tasksData.member || []).filter(
@@ -30,7 +37,12 @@ export default function BoardView({ onTaskUpdated }) {
     };
 
     const loadTags = () => {
-        fetch('https://localhost/api/tags', { headers: { 'Accept': 'application/ld+json' } })
+        fetch('https://localhost/api/tags', {
+            headers: {
+                'Accept': 'application/ld+json',
+                'Authorization': `Bearer ${token}`,
+            }
+        })
             .then(res => res.json())
             .then(tagsData => {
                 const dict = {};
@@ -41,7 +53,12 @@ export default function BoardView({ onTaskUpdated }) {
 
     useEffect(() => {
         loadTags();
-        fetch(`https://localhost/api/boards/${id}`, { headers: { 'Accept': 'application/ld+json' } })
+        fetch(`https://localhost/api/boards/${id}`, {
+            headers: {
+                'Accept': 'application/ld+json',
+                'Authorization': `Bearer ${token}`,
+            }
+        })
             .then(res => res.json())
             .then(boardData => {
                 setBoard(boardData);
@@ -59,7 +76,10 @@ export default function BoardView({ onTaskUpdated }) {
         try {
             const response = await fetch(`https://localhost/api/boards/${id}`, {
                 method: 'PATCH',
-                headers: { 'Content-Type': 'application/merge-patch+json' },
+                headers: {
+                    'Content-Type': 'application/merge-patch+json',
+                    'Authorization': `Bearer ${token}`,
+                },
                 body: JSON.stringify({ title: editedTitle })
             });
             if (response.ok) {

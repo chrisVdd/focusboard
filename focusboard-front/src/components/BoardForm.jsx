@@ -11,19 +11,26 @@ export default function BoardForm({ onBoardAdded }) {
     const [isPickerOpen, setIsPickerOpen] = useState(false);
 
     const handleSubmit = (e) => {
+
         e.preventDefault();
         if (!title.trim()) return;
         setIsSubmitting(true);
+
+        const token = localStorage.getItem("token");
 
         fetch('https://localhost/api/boards', {
             method: 'POST',
             headers: {
                 'Accept': 'application/ld+json',
                 'Content-Type': 'application/ld+json',
+                'Authorization': `Bearer ${token}`,
             },
             body: JSON.stringify({ title, icon, color })
         })
-            .then(res => res.json())
+            .then(response => {
+                if (!response.ok) throw new Error('Error while creating');
+                return response.json();
+            })
             .then(() => {
                 onBoardAdded();
                 setTitle('');
@@ -66,7 +73,6 @@ export default function BoardForm({ onBoardAdded }) {
                     )}
                 </div>
 
-                {/* TITRE STYLE "INPUT MINIMALISTE" */}
                 <input
                     type="text"
                     value={title}
@@ -77,7 +83,6 @@ export default function BoardForm({ onBoardAdded }) {
                 />
             </div>
 
-            {/* FOOTER : COULEURS + BOUTON */}
             <div className="flex items-center justify-between pt-4 border-t border-slate-700/30">
                 <div className="flex gap-3">
                     {Object.entries(boardColors).map(([key, styles]) => (

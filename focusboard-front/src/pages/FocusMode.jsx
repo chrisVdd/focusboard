@@ -10,8 +10,14 @@ export default function FocusMode({ onComplete }) {
     const [isActive, setIsActive] = useState(false);
     const [isFinishing, setIsFinishing] = useState(false);
 
+    const token = localStorage.getItem("token");
+
     const loadTask = () => {
-        fetch(`https://localhost/api/tasks/${taskId}`, { headers: { 'Accept': 'application/ld+json' } })
+        fetch(`https://localhost/api/tasks/${taskId}`, {
+            headers: {
+                'Accept': 'application/ld+json',
+                'Authorization': `Bearer ${token}`,
+            } })
             .then(res => res.json())
             .then(data => setTask(data));
     };
@@ -27,7 +33,10 @@ export default function FocusMode({ onComplete }) {
     const toggleSub = async (sub) => {
         await fetch(`https://localhost${sub['@id']}`, {
             method: 'PATCH',
-            headers: { 'Content-Type': 'application/merge-patch+json' },
+            headers: {
+                'Content-Type': 'application/merge-patch+json',
+                'Authorization': `Bearer ${token}`,
+            },
             body: JSON.stringify({ isCompleted: !sub.isCompleted })
         });
         loadTask();
@@ -38,7 +47,10 @@ export default function FocusMode({ onComplete }) {
         setIsFinishing(true);
         const res = await fetch(`https://localhost/api/tasks/${taskId}`, {
             method: 'PATCH',
-            headers: { 'Content-Type': 'application/merge-patch+json' },
+            headers: {
+                'Content-Type': 'application/merge-patch+json',
+                'Authorization': `Bearer ${token}`,
+            },
             body: JSON.stringify({ isCompleted: true, completedAt: new Date().toISOString() })
         });
         if (res.ok) {

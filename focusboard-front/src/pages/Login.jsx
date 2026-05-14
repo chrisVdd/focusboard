@@ -1,13 +1,16 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext.tsx";
 
-function Login({ onLogin }) {
+function Login() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
+    const { handleLogin } = useAuth();
+    
     const handleSubmit = async (e) => {
 
         e.preventDefault();
@@ -24,8 +27,8 @@ function Login({ onLogin }) {
             if (!response.ok) throw new Error("Invalid credentials");
 
             const data = await response.json();
+            handleLogin(data.token);
 
-            onLogin(data.token);
             navigate("/");
 
         } catch (err) {
