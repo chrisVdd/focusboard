@@ -28,21 +28,40 @@ function Home() {
 
     const boardIds = useMemo(() => boards.map(b => b.id.toString()), [boards]);
 
-    const loadBoards = () => {
-        fetch('https://localhost/api/boards', { headers: { 'Accept': 'application/ld+json' } })
-            .then(res => res.json())
-            .then(data => {
-                const sorted = (data.member || []).sort((a, b) => (a.position ?? 0) - (b.position ?? 0));
-                setBoards(sorted);
-                setIsLoading(false);
-            })
-            .catch(() => setIsLoading(false));
+    const loadBoards = async () => {
+        const token = localStorage.getItem("token");
+        try {
+            const response = await fetch('https://localhost/api/boards', {
+                headers: {
+                    'Accept': 'application/ld+json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.status === 401) {
+                localStorage.removeItem("token");
+                window.location.href = "/login";
+                return;
+            }
+
+            if (!response.ok) throw new Error("Recovery error");
+
+            const data = await response.json();
+            const sorted = (data.member || []).sort((a, b) => (a.position ?? 0) - (b.position ?? 0));
+            setBoards(sorted);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     useEffect(() => { loadBoards(); }, []);
 
     const handleDragEnd = (event) => {
         const { active, over } = event;
+        const token = localStorage.getItem("token");
+
         if (over && active.id !== over.id) {
             setBoards((items) => {
                 const oldIndex = items.findIndex((i) => i.id.toString() === active.id);
@@ -51,7 +70,10 @@ function Home() {
 
                 fetch(`https://localhost/api/boards/${active.id}`, {
                     method: 'PATCH',
-                    headers: { 'Content-Type': 'application/merge-patch+json' },
+                    headers: {
+                        'Content-Type': 'application/merge-patch+json',
+                        'Authorization': `Bearer ${token}`
+                    },
                     body: JSON.stringify({ position: newIndex })
                 });
 
@@ -59,7 +81,6 @@ function Home() {
             });
         }
     };
-
     const handleBoardDeleted = (boardId) => {
         setBoards(prev => prev.filter(b => b.id !== boardId));
     }
