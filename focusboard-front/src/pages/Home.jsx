@@ -1,4 +1,3 @@
-// Home.jsx
 import { useState, useEffect, useMemo } from "react";
 import { Link } from 'react-router-dom';
 import {
@@ -12,7 +11,8 @@ import {
 import { arrayMove, SortableContext, rectSortingStrategy } from "@dnd-kit/sortable";
 import BoardList from "../components/BoardList.jsx";
 import BoardForm from "../components/BoardForm.jsx";
-4
+import QuickCapture from "../components/QuickCapture.jsx";
+
 function Home() {
     const [boards, setBoards] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -88,6 +88,9 @@ function Home() {
     return (
         <div className="min-h-screen bg-slate-900 p-8 text-white">
             <h1 className="text-4xl font-bold text-emerald-400 mb-8 tracking-wide">FocusBoard</h1>
+
+            <QuickCapture boards={boards} onTaskAdded={loadBoards} />
+
             <BoardForm onBoardAdded={loadBoards} />
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
