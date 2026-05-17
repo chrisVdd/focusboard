@@ -1,6 +1,6 @@
 import BoardCard from "./BoardCard.jsx";
 
-export default function BoardList({ boards, isLoading }) {
+export default function BoardList({ boards, isLoading, onBoardDeleted }) {
     if (isLoading) {
         return <p className="text-emerald-500 animate-pulse">Loading database</p>
     }
@@ -12,7 +12,7 @@ export default function BoardList({ boards, isLoading }) {
     return (
         <div className="contents">
             {boards.map(board => (
-                <BoardCard key={board.id.toString()} board={board} />
+                <BoardCard key={board.id.toString()} board={board} onDeleted={onBoardDeleted} />
             ))}
         </div>
     );

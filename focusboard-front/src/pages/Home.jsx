@@ -110,7 +110,7 @@ function Home() {
 
                 <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
                     <SortableContext items={boardIds} strategy={rectSortingStrategy}>
-                        <BoardList boards={boards} isLoading={isLoading} onBoardDeleted={handleBoardDeleted} />
+                        <BoardList boards={boards} isLoading={isLoading} onBoardDeleted={loadBoards} />
                     </SortableContext>
                 </DndContext>
             </div>
