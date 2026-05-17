@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { boardColors } from "../utils/colors.js";
-
-const EMOJI_SUGGESTIONS = ['🚀', '💼', '🏡', '🏋️', '🎨', '💸', '🧹', '🌿', '📖', '🎮', '💡'];
+import { useAuth } from "../context/AuthContext.jsx";
+import EmojiPicker, { Theme } from 'emoji-picker-react';
 
 export default function BoardForm({ onBoardAdded }) {
     const [title, setTitle] = useState('');
@@ -10,13 +10,12 @@ export default function BoardForm({ onBoardAdded }) {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isPickerOpen, setIsPickerOpen] = useState(false);
 
-    const handleSubmit = (e) => {
+    const { token } = useAuth();
 
+    const handleSubmit = (e) => {
         e.preventDefault();
         if (!title.trim()) return;
         setIsSubmitting(true);
-
-        const token = localStorage.getItem("token");
 
         fetch('https://localhost/api/boards', {
             method: 'POST',
@@ -43,41 +42,42 @@ export default function BoardForm({ onBoardAdded }) {
 
     return (
         <form onSubmit={handleSubmit} className="mb-12 bg-slate-800/80 p-6 rounded-2xl border border-slate-700/80 shadow-2xl flex flex-col gap-6">
-            <div className="flex items-center gap-6">
-                {/* PICKER D'ICÔNE */}
-                <div className="relative">
-                    <button
-                        type="button"
-                        onClick={() => setIsPickerOpen(!isPickerOpen)}
-                        className="w-16 h-16 bg-slate-700 rounded-2xl text-4xl flex items-center justify-center border-2 border-slate-600 hover:border-emerald-500 hover:scale-105 transition-all duration-300 shadow-inner"
-                    >
-                        {icon}
-                    </button>
+            <div className="flex items-center gap-4 relative">
 
-                    {isPickerOpen && (
-                        <div className="absolute top-full mt-4 left-0 bg-slate-900 border border-slate-700 p-4 rounded-2xl shadow-2xl z-50 w-72 animate-in fade-in zoom-in duration-200">
-                            <p className="text-[10px] text-slate-500 mb-3 font-bold uppercase tracking-widest text-center">Choose a mood</p>
-                            <div className="grid grid-cols-4 gap-2">
-                                {EMOJI_SUGGESTIONS.map(emoji => (
-                                    <button
-                                        key={emoji}
-                                        type="button"
-                                        onClick={() => { setIcon(emoji); setIsPickerOpen(false); }}
-                                        className="text-2xl p-2 hover:bg-slate-700 rounded-xl transition-all hover:scale-125"
-                                    >
-                                        {emoji}
-                                    </button>
-                                ))}
-                            </div>
+                <button
+                    type="button"
+                    onClick={() => setIsPickerOpen(!isPickerOpen)}
+                    className="w-16 h-16 rounded-2xl bg-slate-900 flex items-center justify-center text-3xl border border-slate-700/50 hover:bg-slate-800 hover:border-emerald-500/50 transition-all shrink-0"
+                >
+                    {icon}
+                </button>
+
+                {isPickerOpen && (
+                    <>
+                        <div
+                            className="fixed inset-0 z-40"
+                            onClick={() => setIsPickerOpen(false)}
+                        ></div>
+
+                        <div className="absolute top-20 left-0 z-50 shadow-2xl animate-fade-in-fast">
+                            <EmojiPicker
+                                theme="dark"
+                                onEmojiClick={(emojiObject) => {
+                                    setIcon(emojiObject.emoji);
+                                    setIsPickerOpen(false);
+                                }}
+                                searchPlaceholder="Chercher un emoji..."
+                                autoFocusSearch={false}
+                            />
                         </div>
-                    )}
-                </div>
+                    </>
+                )}
 
                 <input
                     type="text"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    placeholder="Board name..."
+                    placeholder="New mission..."
                     disabled={isSubmitting}
                     className="flex-1 text-3xl font-bold bg-transparent text-white placeholder-slate-600 focus:outline-none focus:placeholder-slate-500 border-b-2 border-slate-700/50 focus:border-emerald-500 transition-all"
                 />

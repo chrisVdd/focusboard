@@ -17,13 +17,9 @@ export default function LevelBadge({ tasks }) {
         const subs = task.subTasks || [];
         const completedSubs = subs.filter(s => s.isCompleted).length;
 
-        // 1. On donne 2 XP par subtask dès qu'elle est cochée
         xp += (completedSubs * 2);
-
-        // 2. Si la tâche principale est terminée, on ajoute ses points
         if (task.isCompleted) {
             xp += 10;
-            // 3. Bonus Full Clear (si toutes les subtasks sont faites)
             if (subs.length > 0 && completedSubs === subs.length) {
                 xp += 5;
             }

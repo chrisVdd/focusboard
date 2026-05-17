@@ -6,9 +6,10 @@ import { CSS } from '@dnd-kit/utilities';
 import { useAuth } from "../context/AuthContext";
 
 export default function BoardCard({ board, onDeleted }) {
-    const { token } = useAuth();
     const [isConfirming, setIsConfirming] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
+
+    const { token } = useAuth();
 
     const {
         attributes,

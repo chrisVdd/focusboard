@@ -12,10 +12,13 @@ import { arrayMove, SortableContext, rectSortingStrategy } from "@dnd-kit/sortab
 import BoardList from "../components/BoardList.jsx";
 import BoardForm from "../components/BoardForm.jsx";
 import QuickCapture from "../components/QuickCapture.jsx";
+import { useAuth } from "../context/AuthContext.jsx";
 
 function Home() {
     const [boards, setBoards] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+
+    const { token } = useAuth();
 
     const sensors = useSensors(
         useSensor(MouseSensor, {
@@ -29,7 +32,6 @@ function Home() {
     const boardIds = useMemo(() => boards.map(b => b.id.toString()), [boards]);
 
     const loadBoards = async () => {
-        const token = localStorage.getItem("token");
         try {
             const response = await fetch('https://localhost/api/boards', {
                 headers: {
@@ -60,7 +62,6 @@ function Home() {
 
     const handleDragEnd = (event) => {
         const { active, over } = event;
-        const token = localStorage.getItem("token");
 
         if (over && active.id !== over.id) {
             setBoards((items) => {

@@ -42,7 +42,10 @@ export default function TaskItem({ task, onTaskUpdated, tagsDict }) {
         if (e.key !== 'Enter' || !newSubTask.trim()) return;
         const res = await fetch('https://localhost/api/sub_tasks', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/ld+json' },
+            headers: {
+                'Content-Type': 'application/ld+json',
+                'Authorization': `Bearer ${token}`,
+            },
             body: JSON.stringify({ title: newSubTask, task: task['@id'], isCompleted: false })
         });
         if (res.ok) { setNewSubTask(''); onTaskUpdated(); }

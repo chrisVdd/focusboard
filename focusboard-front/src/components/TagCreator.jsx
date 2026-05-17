@@ -9,13 +9,13 @@ export default function TagCreator({ onTagAdded }) {
     const [color, setColor] = useState('emerald');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+    const { token } = useAuth();
+
     const handleSubmit = (e) => {
         e.preventDefault();
         if (!name.trim()) return;
 
         setIsSubmitting(true);
-
-        const { token } = useAuth();
 
         fetch('https://localhost/api/tags', {
             method: 'POST',

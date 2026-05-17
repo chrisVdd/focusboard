@@ -10,19 +10,19 @@ export default function TaskForm({ boardId, onTaskAdded, colorTheme, availableTa
     const themeBg = colorTheme ? colorTheme.bg : 'bg-emerald-600';
     const themeText = colorTheme ? colorTheme.text : 'text-emerald-400';
 
+    const { token } = useAuth();
+
     const toggleTag = (tagIri) => {
         setSelectedTags(prev =>
             prev.includes(tagIri) ? prev.filter(t => t !== tagIri) : [...prev, tagIri]
         );
-    };
 
+    };
     const handleSubmit = (e) => {
         e.preventDefault();
         if (!title.trim()) return;
 
         setIsSubmitting(true);
-
-        const { token } = useAuth();
 
         fetch('https://localhost/api/tasks', {
             method: 'POST',

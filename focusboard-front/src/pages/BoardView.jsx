@@ -6,7 +6,6 @@ import TaskItem from '../components/TaskItem';
 import TagCreator from "../components/TagCreator.jsx";
 import { useAuth } from '../context/AuthContext';
 
-// ✅ AJOUT : On récupère la prop onTaskUpdated passée par App.jsx
 export default function BoardView({ onTaskUpdated }) {
     const { id } = useParams();
     const [board, setBoard] = useState(null);
@@ -128,7 +127,7 @@ export default function BoardView({ onTaskUpdated }) {
                     <TagCreator onTagAdded={loadTags} />
                     <div className="flex flex-wrap gap-2">
                         {Object.values(tagsDict).map(tag => (
-                            <button key={tag.id} onClick={() => setActiveFilters(prev => prev.includes(tag['@id']) ? prev.filter(x => x !== tag['@id']) : [...prev, tag['@id']])} className={`text-xs px-3 py-1 rounded-full border transition-all ${activeFilters.includes(tag['@id']) ? 'bg-emerald-500 text-white' : 'bg-slate-900/50 text-slate-400'}`}>
+                            <button key={tag['@id']} onClick={() => setActiveFilters(prev => prev.includes(tag['@id']) ? prev.filter(x => x !== tag['@id']) : [...prev, tag['@id']])} className={`text-xs px-3 py-1 rounded-full border transition-all ${activeFilters.includes(tag['@id']) ? 'bg-emerald-500 text-white' : 'bg-slate-900/50 text-slate-400'}`}>
                                 {tag.name}
                             </button>
                         ))}
