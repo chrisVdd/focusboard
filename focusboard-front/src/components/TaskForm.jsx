@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { boardColors } from '../utils/colors.js';
+import { useAuth } from '../context/AuthContext';
 
 export default function TaskForm({ boardId, onTaskAdded, colorTheme, availableTags }) {
     const [title, setTitle] = useState('');
@@ -21,7 +22,7 @@ export default function TaskForm({ boardId, onTaskAdded, colorTheme, availableTa
 
         setIsSubmitting(true);
 
-        const token = localStorage.getItem("token");
+        const { token } = useAuth();
 
         fetch('https://localhost/api/tasks', {
             method: 'POST',

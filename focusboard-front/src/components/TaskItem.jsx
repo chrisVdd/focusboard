@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { boardColors } from "../utils/colors.js";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from '../context/AuthContext';
 
 export default function TaskItem({ task, onTaskUpdated, tagsDict }) {
 
@@ -17,7 +18,7 @@ export default function TaskItem({ task, onTaskUpdated, tagsDict }) {
     const completedSub = subTasks.filter(s => s.isCompleted).length;
     const progressPercent = subTasks.length > 0 ? Math.round((completedSub / subTasks.length) * 100) : 0;
 
-    const token = localStorage.getItem("token");
+    const { token } = useAuth();
 
     const toggleCompletion = () => {
         const newValue = !isCompleted;

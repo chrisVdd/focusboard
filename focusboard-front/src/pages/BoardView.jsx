@@ -4,6 +4,7 @@ import { boardColors } from '../utils/colors';
 import TaskForm from '../components/TaskForm';
 import TaskItem from '../components/TaskItem';
 import TagCreator from "../components/TagCreator.jsx";
+import { useAuth } from '../context/AuthContext';
 
 // ✅ AJOUT : On récupère la prop onTaskUpdated passée par App.jsx
 export default function BoardView({ onTaskUpdated }) {
@@ -16,7 +17,7 @@ export default function BoardView({ onTaskUpdated }) {
     const [isEditingTitle, setIsEditingTitle] = useState(false);
     const [editedTitle, setEditedTitle] = useState("");
 
-    const token = localStorage.getItem("token");
+    const { token } = useAuth();
 
     const loadTasks = () => {
         fetch('https://localhost/api/tasks', {

@@ -1,5 +1,6 @@
 import { useState} from "react";
 import { boardColors } from "../utils/colors.js";
+import { useAuth } from '../context/AuthContext';
 
 export default function TagCreator({ onTagAdded }) {
 
@@ -14,7 +15,7 @@ export default function TagCreator({ onTagAdded }) {
 
         setIsSubmitting(true);
 
-        const token = localStorage.getItem("token");
+        const { token } = useAuth();
 
         fetch('https://localhost/api/tags', {
             method: 'POST',

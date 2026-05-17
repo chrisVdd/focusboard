@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import confetti from 'canvas-confetti';
+import { useAuth } from '../context/AuthContext';
 
 export default function FocusMode({ onComplete }) {
     const { taskId } = useParams();
@@ -10,7 +11,7 @@ export default function FocusMode({ onComplete }) {
     const [isActive, setIsActive] = useState(false);
     const [isFinishing, setIsFinishing] = useState(false);
 
-    const token = localStorage.getItem("token");
+    const { token } = useAuth();
 
     const loadTask = () => {
         fetch(`https://localhost/api/tasks/${taskId}`, {
