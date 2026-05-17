@@ -50,17 +50,19 @@ export default function QuickCapture({ boards, onTaskAdded }) {
 
     return (
         <div className="mb-12 relative group animate-fade-in-fast">
-            <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-teal-400 rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-500"></div>
+            <div className="absolute -inset-1 bg-linear-to-r from-emerald-500 to-teal-400 rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-500"></div>
 
             <form onSubmit={handleSubmit} className="relative bg-slate-900 rounded-xl p-3 flex flex-col md:flex-row gap-3 items-center border border-white/10 shadow-2xl">
                 <div className="flex-1 w-full relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-2xl opacity-70">⚡</span>
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-2xl opacity-70">
+                         💡
+                    </span>
                     <input
                         type="text"
                         autoFocus
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
-                        placeholder="Une idée ? Vide ton cerveau ici... (Entrée pour sauver)"
+                        placeholder="Any ideas ? Save it here !!"
                         className="w-full bg-slate-950/50 text-white pl-12 pr-4 py-4 rounded-lg border border-transparent focus:border-emerald-500/50 focus:bg-slate-950 focus:outline-none transition-all text-lg font-medium placeholder-slate-600"
                         disabled={isSubmitting}
                     />

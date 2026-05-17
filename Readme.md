@@ -1,12 +1,26 @@
 # Readme
 
-## Docker CLI
+## CLI
+
+### Makefile
+
+To ease the dev and the launch, there's a Makefile at project root.
+So:
+
+* start the project: ´make start´
+* stop propery: 
+´
+Ctrl + C
+make stop
+´
+
+### More detailed ∕ Docker CLI
 
 * build: ´dcub´
 * run:   ´dcu´
 * stop:  ´dcs´
 
-## React CLI
+### More detailed ∕ React CLI
 
 * run the server: ´npm run dev´
 
