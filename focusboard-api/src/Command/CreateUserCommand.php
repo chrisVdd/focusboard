@@ -15,7 +15,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 #[AsCommand(
     name: 'app:create-user',
-    description: 'Create a user',
+    description: 'Create a new user',
 )]
 class CreateUserCommand extends Command
 {
@@ -30,17 +30,37 @@ class CreateUserCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
+        $io->title('User creation wizard');
 
+        $username = $io->ask("What's your username?", null, function (?string $username) {
+            if (empty(trim((string) $username))) {
+                throw new \RuntimeException('The username cannot be empty.');
+            }
+
+            return $username;
+        });
+
+        $role = $io->ask('What is the role?', 'ROLE_USER');
+
+        $password = $io->askHidden("What's your password?", function (?string $password) {
+            if (empty(trim((string) $password))) {
+                throw new \RuntimeException('The password cannot be empty.');
+            }
+
+            return $password;
+        });
+
+        /** @var User $user */
         $user = new User();
-        $user->setUsername('test');
-        $user->setRoles(['ROLE_USER']);
-        $hashedPassword = $this->passwordHasher->hashPassword($user, 'password123');
+        $user->setUsername($username);
+        $user->setRoles([$role]);
+        $hashedPassword = $this->passwordHasher->hashPassword($user, $password);
         $user->setPassword($hashedPassword);
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
 
-        $io->success('User ' .$user->getUsername(). ' has been created.');
+        $io->success(sprintf('User "%s" has been successfully created with role "%s".', $user->getUsername(), $role));
 
         return Command::SUCCESS;
     }
